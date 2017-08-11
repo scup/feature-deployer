@@ -19,14 +19,18 @@ if(commander.approveFeature) {
   deployFeature(commander.approveFeature, true)
 }
 
+if(commander.repproveFeature) {
+  deployFeature(commander.repproveFeature, false, true)
+}
+
 const removeDuplicated = (ignoreItem) => (items, item) => {
-  if (items.indexOf(item) === -1 && item !== ignoreItem) {
+  if (item && items.indexOf(item) === -1 && item !== ignoreItem) {
     items.push(item)
   }
   return items
 }
 
-async function deployFeature(feature, approve) {
+async function deployFeature(feature, approve, repprove) {
   await simpleGit.checkout(['master'])
   await simpleGit.deleteLocalBranch('rc')
   await simpleGit.checkout(['rc'])
@@ -38,7 +42,6 @@ async function deployFeature(feature, approve) {
   branchs.all.map(async (branch) => {
     if ( branch.match(/^remotes\/[^\/]*\/qa__.*/) ) {
       const remoteBranch = branch.replace(/^remotes\/[^\/]*\//, '')
-      console.log(remoteBranch)
       await simpleGit.push('origin', `:${remoteBranch}`)
     } else if ( branch.match(/^qa__.*/gi) ) {
       await simpleGit.deleteLocalBranch(branch)
@@ -48,7 +51,7 @@ async function deployFeature(feature, approve) {
   let features = [feature]
   if (remoteQaBranch) {
     const oldBranch = remoteQaBranch.replace(/^[^\/]*\/[^\/]*\//, '')
-    const reduceFunction = approve ? removeDuplicated(feature) : removeDuplicated()
+    const reduceFunction = approve || repprove ? removeDuplicated(feature) : removeDuplicated()
     features = features.concat(oldBranch.replace('qa__', '').split('__')).reduce(reduceFunction,[])
   }
 
@@ -69,6 +72,10 @@ async function deployFeature(feature, approve) {
     const remotes = await simpleGit.getRemotes(true) 
     const repositoryUrl = remotes.pop().refs.fetch.replace(/.*:([^\.]*).*/,'$1')
     console.log(`Create a pull request to RC: https://bitbucket.org/${repositoryUrl}/pull-requests/new?source=${feature}&t=1`)
+  }
+
+  if (repprove) {
+    console.log(`REPROVED and removed from qa`)
   }
   console.log('OK!')
 }
