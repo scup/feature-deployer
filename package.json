@@ -6,6 +6,9 @@
   "name": "feature-deployer",
   "version": "1.0.0",
   "main": "feature-deployer.js",
+  "bin": {
+    "feature-deployer": "feature-deployer.js"
+  },
   "author": "Lucas Barboza <lucas.barboza@sprinklr.com>",
   "license": "MIT"
 }
