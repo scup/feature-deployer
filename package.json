@@ -5,7 +5,7 @@
   },
   "name": "feature-deployer",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "feature-deployer.js",
   "author": "Lucas Barboza <lucas.barboza@sprinklr.com>",
   "license": "MIT"
 }

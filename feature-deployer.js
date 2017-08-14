@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
 const commander = require("commander")
-const simpleGit = require("simple-git/promise")(__dirname)
-console.log(__dirname)
 
 commander
   .version('0.1.0')
+  .option('-d, --dirname [name]', 'Set git directory', /^.*$/i, __dirname)
   .option('-d, --deploy-feature [name]', 'Deploy feature to Test')
   .option('-a, --approve-feature [name]', 'Approve feature')
   .option('-r, --repprove-feature [name]', 'Repprove feature')
   .parse(process.argv)
+
+const simpleGit = require("simple-git/promise")(commander.dirname)
 
 if(commander.deployFeature) {
   deployFeature(commander.deployFeature)
