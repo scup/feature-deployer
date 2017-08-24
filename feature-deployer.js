@@ -34,7 +34,6 @@ const removeDuplicated = (ignoreItem) => (items, item) => {
 async function deployFeature(feature, approve, repprove) {
   await simpleGit.fetch()
   await simpleGit.checkout(['production'])
-  await simpleGit.deleteLocalBranch('rc')
   await simpleGit.checkout(['rc'])
   await simpleGit.pull()
 
