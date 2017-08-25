@@ -57,8 +57,11 @@ async function deployFeature(feature, approve, repprove) {
   const branchQaName = `qa__${features.join('__')}`
   
   console.log(`Creating qa branch! ${branchQaName}`)
-
-  await simpleGit.checkoutBranch(branchQaName, 'rc')
+  try {
+    await simpleGit.checkoutBranch(branchQaName, 'rc')
+  } catch (exception) {
+    console.log(exception)
+  }
 
   console.log(`Branch created! ${branchQaName}`)
 
