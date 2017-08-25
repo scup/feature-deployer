@@ -40,15 +40,6 @@ async function deployFeature(feature, approve, repprove) {
   let branchs = await simpleGit.branch()
   const remoteQaBranch = branchs.all.find((branch) => branch.match(/^remotes\/[^\/]*\/qa__.*/))
   
-  branchs.all.map(async (branch) => {
-    if ( branch.match(/^remotes\/[^\/]*\/qa__.*/) ) {
-      const remoteBranch = branch.replace(/^remotes\/[^\/]*\//, '')
-      await simpleGit.push('origin', `:${remoteBranch}`)
-    } else if ( branch.match(/^qa__.*/gi) ) {
-      await simpleGit.deleteLocalBranch(branch)
-    }
-  })
-
   let features = [feature]
   if (remoteQaBranch) {
     const oldBranch = remoteQaBranch.replace(/^[^\/]*\/[^\/]*\//, '')
@@ -56,18 +47,28 @@ async function deployFeature(feature, approve, repprove) {
     features = features.concat(oldBranch.replace('qa__', '').split('__')).reduce(reduceFunction,[])
   }
 
-  await simpleGit.branch([`qa__${features.join('__')}`])
+  const branchQaName = `qa__${features.join('__')}`
+  await simpleGit.branch([branchQaName])
 
   features.map(async (feature) => {
     try {
         await simpleGit.checkout([feature])
-        await simpleGit.mergeFromTo(feature, `qa__${features.join('__')}`)
+        await simpleGit.mergeFromTo(feature, `qa__${branchQaName}`)
     } catch(e) {
       throw `Feature inexistente: ${feature}`
     }
   })
 
-  await simpleGit.push('origin', `qa__${features.join('__')}`)
+  branchs.all.map(async (branch) => {
+    if ( branch.match(/^remotes\/[^\/]*\/qa__.*/) ) {
+      const remoteBranch = branch.replace(/^remotes\/[^\/]*\//, '')
+      await simpleGit.push('origin', `:${remoteBranch}`)
+    } else if ( branch.match(/^qa__.*/gi) && branch !== `qa__${branchQaName}` ) {
+      await simpleGit.deleteLocalBranch(branch)
+    }
+  })
+
+  await simpleGit.push('origin', `qa__${branchQaName}`)
 
   if (approve) {
     const remotes = await simpleGit.getRemotes(true) 
