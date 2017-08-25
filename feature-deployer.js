@@ -65,34 +65,34 @@ async function deployFeature(feature, approve, repprove) {
     console.log(`Mergin feature ${feature}`)
     return simpleGit.checkout([feature])
       .then(() => simpleGit.mergeFromTo(feature, branchQaName))
-      .then(() => console.log(`Merged ${branchQaName}!`))
+      .then(() => console.log(`Merged ${feature} to ${branchQaName}!`))
   }))
 
-  await branchs.all.map(async (branch) => {
-    if ( branch.match(/^remotes\/[^\/]*\/qa__.*/) ) {
-      const remoteBranch = branch.replace(/^remotes\/[^\/]*\//, '')
-      console.log(`Removing branch ${remoteBranch}`)
-      await simpleGit.push('origin', `:${remoteBranch}`)
-      console.log(`Branch removed!`)
-    } else if ( branch.match(/^qa__.*/gi) && branch !== branchQaName ) {
-      console.log(`Removing branch ${branch}`)
-      await simpleGit.raw(['branch', '-D', branch])
-      console.log(`Branch removed!`)
-    }
-  })
+  // await branchs.all.map(async (branch) => {
+  //   if ( branch.match(/^remotes\/[^\/]*\/qa__.*/) ) {
+  //     const remoteBranch = branch.replace(/^remotes\/[^\/]*\//, '')
+  //     console.log(`Removing branch ${remoteBranch}`)
+  //     await simpleGit.push('origin', `:${remoteBranch}`)
+  //     console.log(`Branch removed!`)
+  //   } else if ( branch.match(/^qa__.*/gi) && branch !== branchQaName ) {
+  //     console.log(`Removing branch ${branch}`)
+  //     await simpleGit.raw(['branch', '-D', branch])
+  //     console.log(`Branch removed!`)
+  //   }
+  // })
 
-  console.log(`Pushing branch ${branchQaName}`)
-  await simpleGit.push('origin', branchQaName)
-  console.log(`Branch pushed!`)
+  // console.log(`Pushing branch ${branchQaName}`)
+  // await simpleGit.push('origin', branchQaName)
+  // console.log(`Branch pushed!`)
 
-  if (approve) {
-    const remotes = await simpleGit.getRemotes(true) 
-    const repositoryUrl = remotes.pop().refs.fetch.replace(/.*:([^\.]*).*/,'$1')
-    console.log(`Create a pull request to RC: https://bitbucket.org/${repositoryUrl}/pull-requests/new?source=${feature}&t=1`)
-  }
+  // if (approve) {
+  //   const remotes = await simpleGit.getRemotes(true) 
+  //   const repositoryUrl = remotes.pop().refs.fetch.replace(/.*:([^\.]*).*/,'$1')
+  //   console.log(`Create a pull request to RC: https://bitbucket.org/${repositoryUrl}/pull-requests/new?source=${feature}&t=1`)
+  // }
 
-  if (repprove) {
-    console.log(`REPROVED and removed from qa`)
-  }
-  console.log('OK!')
+  // if (repprove) {
+  //   console.log(`REPROVED and removed from qa`)
+  // }
+  // console.log('OK!')
 }
