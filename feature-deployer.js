@@ -65,7 +65,7 @@ async function deployFeature(feature, approve, repprove) {
     try {
         console.log(`Mergin feature ${feature}`)
         await simpleGit.checkout([feature])
-        await simpleGit.mergeFromTo(feature, `qa__${branchQaName}`)
+        await simpleGit.mergeFromTo(feature, branchQaName)
         console.log(`Merged!`)
     } catch(e) {
       throw `Feature inexistente: ${feature}`
@@ -78,7 +78,7 @@ async function deployFeature(feature, approve, repprove) {
       console.log(`Removing branch ${remoteBranch}`)
       await simpleGit.push('origin', `:${remoteBranch}`)
       console.log(`Branch removed!`)
-    } else if ( branch.match(/^qa__.*/gi) && branch !== `qa__${branchQaName}` ) {
+    } else if ( branch.match(/^qa__.*/gi) && branch !== branchQaName ) {
       console.log(`Removing branch ${branch}`)
       await simpleGit.deleteLocalBranch(branch)
       console.log(`Branch removed!`)
@@ -86,7 +86,7 @@ async function deployFeature(feature, approve, repprove) {
   })
 
   console.log(`Pushing branch ${branchQaName}`)
-  await simpleGit.push('origin', `qa__${branchQaName}`)
+  await simpleGit.push('origin', branchQaName)
   console.log(`Branch pushed!`)
 
   if (approve) {
