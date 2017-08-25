@@ -36,6 +36,7 @@ async function deployFeature(feature, approve, repprove) {
   console.log("Init Pull...")
 
   await simpleGit.raw(['remote', 'prune', 'origin'])
+  await simpleGit.raw(['checkout', '-f'])
   await simpleGit.fetch()
   await simpleGit.checkout(['production'])
   await simpleGit.checkout(['rc'])
