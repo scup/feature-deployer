@@ -80,7 +80,7 @@ async function deployFeature(feature, approve, repprove) {
       console.log(`Branch removed!`)
     } else if ( branch.match(/^qa__.*/gi) && branch !== branchQaName ) {
       console.log(`Removing branch ${branch}`)
-      await simpleGit.deleteLocalBranch(branch)
+      await simpleGit.raw(['branch', '-D', branch])
       console.log(`Branch removed!`)
     }
   })
