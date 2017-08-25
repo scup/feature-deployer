@@ -57,7 +57,7 @@ async function deployFeature(feature, approve, repprove) {
   
   console.log(`Creating qa branch! ${branchQaName}`)
 
-  await simpleGit.branch([branchQaName])
+  await simpleGit.checkoutLocalBranch(branchQaName)
 
   console.log(`Branch created! ${branchQaName}`)
 
