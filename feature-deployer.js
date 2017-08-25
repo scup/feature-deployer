@@ -90,10 +90,12 @@ async function deployFeature(feature, approve, repprove) {
   await simpleGit.push('origin', branchQaName)
   console.log(`Branch pushed!`)
 
+  const featureWithoutQa = feature.replace('_qa', '')
+
   if (approve) {
     const remotes = await simpleGit.getRemotes(true) 
     const repositoryUrl = remotes.pop().refs.fetch.replace(/.*:([^\.]*).*/,'$1')
-    console.log(`Create a pull request to RC: https://bitbucket.org/${repositoryUrl}/pull-requests/new?source=${feature}&t=1`)
+    console.log(`Create a pull request to RC: https://bitbucket.org/${repositoryUrl}/pull-requests/new?source=${featureWithoutQa}&t=1`)
   }
 
   if (repprove) {
