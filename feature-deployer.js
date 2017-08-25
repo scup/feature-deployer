@@ -65,7 +65,7 @@ async function deployFeature(feature, approve, repprove) {
     console.log(`Mergin feature ${feature}`)
     return simpleGit.checkout([feature])
       .then(() => simpleGit.mergeFromTo(feature, branchQaName))
-    console.log(`Merged!`)
+      .then(() => console.log(`Merged ${branchQaName}!`))
   }))
 
   await branchs.all.map(async (branch) => {
