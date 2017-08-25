@@ -61,16 +61,17 @@ async function deployFeature(feature, approve, repprove) {
 
   console.log(`Branch created! ${branchQaName}`)
 
-  await features.map(async (feature) => {
+  await Promise.all(features.map((feature) => {
     try {
         console.log(`Mergin feature ${feature}`)
-        await simpleGit.checkout([feature])
-        await simpleGit.mergeFromTo(feature, branchQaName)
+        
+        return simpleGit.checkout([feature])
+          .then(() => simpleGit.mergeFromTo(feature, branchQaName))
         console.log(`Merged!`)
     } catch(e) {
       throw `Feature inexistente: ${feature}`
     }
-  })
+  }))
 
   await branchs.all.map(async (branch) => {
     if ( branch.match(/^remotes\/[^\/]*\/qa__.*/) ) {
