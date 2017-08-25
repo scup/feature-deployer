@@ -32,10 +32,15 @@ const removeDuplicated = (ignoreItem) => (items, item) => {
 }
 
 async function deployFeature(feature, approve, repprove) {
+
+  console.log("Init Pull...")
+
   await simpleGit.fetch()
   await simpleGit.checkout(['production'])
   await simpleGit.checkout(['rc'])
   await simpleGit.pull()
+
+  console.log("Pull complete!")
 
   let branchs = await simpleGit.branch()
   const remoteQaBranch = branchs.all.find((branch) => branch.match(/^remotes\/[^\/]*\/qa__.*/))
@@ -46,14 +51,21 @@ async function deployFeature(feature, approve, repprove) {
     const reduceFunction = approve || repprove ? removeDuplicated(feature) : removeDuplicated()
     features = features.concat(oldBranch.replace('qa__', '').split('__')).reduce(reduceFunction,[])
   }
-
+  
   const branchQaName = `qa__${features.join('__')}`
+  
+  console.log(`Creating qa branch! ${branchQaName}`)
+
   await simpleGit.branch([branchQaName])
+
+  console.log(`Branch created! ${branchQaName}`)
 
   features.map(async (feature) => {
     try {
+        console.log(`Mergin feature ${feature}`)
         await simpleGit.checkout([feature])
         await simpleGit.mergeFromTo(feature, `qa__${branchQaName}`)
+        console.log(`Merged!`)
     } catch(e) {
       throw `Feature inexistente: ${feature}`
     }
@@ -62,13 +74,19 @@ async function deployFeature(feature, approve, repprove) {
   branchs.all.map(async (branch) => {
     if ( branch.match(/^remotes\/[^\/]*\/qa__.*/) ) {
       const remoteBranch = branch.replace(/^remotes\/[^\/]*\//, '')
+      console.log(`Removing branch ${remoteBranch}`)
       await simpleGit.push('origin', `:${remoteBranch}`)
+      console.log(`Branch removed!`)
     } else if ( branch.match(/^qa__.*/gi) && branch !== `qa__${branchQaName}` ) {
+      console.log(`Removing branch ${branch}`)
       await simpleGit.deleteLocalBranch(branch)
+      console.log(`Branch removed!`)
     }
   })
 
+  console.log(`Pushing branch ${branchQaName}`)
   await simpleGit.push('origin', `qa__${branchQaName}`)
+  console.log(`Branch pushed!`)
 
   if (approve) {
     const remotes = await simpleGit.getRemotes(true) 
