@@ -61,7 +61,7 @@ async function deployFeature(feature, approve, repprove) {
 
   console.log(`Branch created! ${branchQaName}`)
 
-  features.map(async (feature) => {
+  await features.map(async (feature) => {
     try {
         console.log(`Mergin feature ${feature}`)
         await simpleGit.checkout([feature])
@@ -72,7 +72,7 @@ async function deployFeature(feature, approve, repprove) {
     }
   })
 
-  branchs.all.map(async (branch) => {
+  await branchs.all.map(async (branch) => {
     if ( branch.match(/^remotes\/[^\/]*\/qa__.*/) ) {
       const remoteBranch = branch.replace(/^remotes\/[^\/]*\//, '')
       console.log(`Removing branch ${remoteBranch}`)
