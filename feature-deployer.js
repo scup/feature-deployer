@@ -67,9 +67,8 @@ async function deployFeature(feature, approve, repprove) {
 
   await Promise.all(features.map((feature) => {
     console.log(`Mergin feature ${feature}`)
-    return simpleGit.checkout([feature])
-      .then(() => simpleGit.checkout([branchQaName]))
-      .then(() => simpleGit.mergeFromTo(feature, branchQaName))
+    return simpleGit.checkout([branchQaName])
+      .then(() => simpleGit.raw(['pull', 'origin', feature]))
       .then(() => console.log(`Merged ${feature} to ${branchQaName}!`))
   }))
 
