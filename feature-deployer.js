@@ -47,12 +47,14 @@ async function deployFeature(feature, approve, repprove) {
   let branchs = await simpleGit.branch()
   const remoteQaBranch = branchs.all.find((branch) => branch.match(/^remotes\/[^\/]*\/qa__.*/))
   
-  let features = [feature]
+  let features = []
   if (remoteQaBranch) {
     const oldBranch = remoteQaBranch.replace(/^[^\/]*\/[^\/]*\//, '')
     const reduceFunction = approve || repprove ? removeDuplicated(feature) : removeDuplicated()
     features = features.concat(oldBranch.replace('qa__', '').split('__')).reduce(reduceFunction,[])
   }
+
+  features.push(feature)
   
   const branchQaName = `qa__${features.join('__')}`
   
