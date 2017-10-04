@@ -39,7 +39,6 @@ async function deployFeature(feature, approve, repprove) {
   await simpleGit.raw(['checkout', '-f'])
   await simpleGit.fetch()
   await simpleGit.checkout(['production'])
-  await simpleGit.checkout(['rc'])
   await simpleGit.pull()
 
   console.log("Pull complete!")
@@ -59,7 +58,7 @@ async function deployFeature(feature, approve, repprove) {
   
   console.log(`Creating qa branch! ${branchQaName}`)
   try {
-    await simpleGit.checkoutBranch(branchQaName, 'rc')
+    await simpleGit.checkoutBranch(branchQaName, 'production')
   } catch (exception) {
     console.log(exception)
   }
