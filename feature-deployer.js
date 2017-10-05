@@ -3,7 +3,7 @@
 const commander = require("commander")
 
 commander
-  .version('0.1.0')
+  .version('0.1.1')
   .option('--dirname [name]', 'Set git directory', /^.*$/i, __dirname)
   .option('-d, --deploy-feature [name]', 'Deploy feature to Test')
   .option('-a, --approve-feature [name]', 'Approve feature')
@@ -12,16 +12,19 @@ commander
 
 const simpleGit = require("simple-git/promise")(commander.dirname)
 
-if(commander.deployFeature) {
+if (commander.deployFeature) {
   deployFeature(commander.deployFeature)
+    .catch(handleError)
 }
 
-if(commander.approveFeature) {
+if (commander.approveFeature) {
   deployFeature(commander.approveFeature, true)
+    .catch(handleError)
 }
 
-if(commander.repproveFeature) {
+if (commander.repproveFeature) {
   deployFeature(commander.repproveFeature, false, true)
+    .catch(handleError)
 }
 
 const removeDuplicated = (ignoreItem) => (items, item) => {
@@ -32,7 +35,6 @@ const removeDuplicated = (ignoreItem) => (items, item) => {
 }
 
 async function deployFeature(feature, approve, repprove) {
-
   console.log("Init Pull...")
 
   await simpleGit.raw(['remote', 'prune', 'origin'])
@@ -45,7 +47,7 @@ async function deployFeature(feature, approve, repprove) {
 
   let branchs = await simpleGit.branch()
   const remoteQaBranch = branchs.all.find((branch) => branch.match(/^remotes\/[^\/]*\/qa__.*/))
-  
+
   let features = [feature]
   if (remoteQaBranch) {
     const oldBranch = remoteQaBranch.replace(/^[^\/]*\/[^\/]*\//, '')
@@ -53,9 +55,9 @@ async function deployFeature(feature, approve, repprove) {
     const oldFeatures = oldBranch.replace('qa__', '').split('__')
     features = oldFeatures.concat(features).reduce(reduceFunction,[])
   }
-  
+
   const branchQaName = `qa__${features.join('__')}`
-  
+
   console.log(`Creating qa branch! ${branchQaName}`)
   try {
     await simpleGit.checkoutBranch(branchQaName, 'production')
@@ -92,7 +94,7 @@ async function deployFeature(feature, approve, repprove) {
   const featureWithoutQa = feature.replace('_qa', '')
 
   if (approve) {
-    const remotes = await simpleGit.getRemotes(true) 
+    const remotes = await simpleGit.getRemotes(true)
     const repositoryUrl = remotes.pop().refs.fetch.replace(/.*:([^\.]*).*/,'$1')
     console.log(`Create a pull request to RC: https://bitbucket.org/${repositoryUrl}/pull-requests/new?source=${featureWithoutQa}&t=1`)
   }
@@ -100,5 +102,10 @@ async function deployFeature(feature, approve, repprove) {
   if (repprove) {
     console.log(`REPROVED and removed from qa`)
   }
+
   console.log('OK!')
+}
+
+function handleError (error) {
+  console.log(error)
 }
