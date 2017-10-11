@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "commander": "^2.11.0",
-    "simple-git": "^1.75.0"
+    "simple-git": "^1.75.0",
+    "chalk": "^2.1.0"
   },
   "name": "feature-deployer",
   "version": "1.0.0",
