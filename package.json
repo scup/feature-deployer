@@ -5,7 +5,7 @@
     "chalk": "^2.1.0"
   },
   "name": "feature-deployer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "feature-deployer.js",
   "bin": {
     "feature-deployer": "feature-deployer.js"

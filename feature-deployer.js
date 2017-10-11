@@ -3,8 +3,10 @@
 const chalk = require('chalk')
 const commander = require('commander')
 
+const packageData = require('./package.json')
+
 commander
-  .version('0.1.1')
+  .version(packageData.version)
   .option('--dirname [name]', 'Set git directory', /^.*$/i, __dirname)
   .option('-d, --deploy-feature [name]', 'Deploy feature to Test')
   .option('-a, --approve-feature [name]', 'Approve feature')
