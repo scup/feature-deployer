@@ -8,25 +8,27 @@ const packageData = require('./package.json')
 commander
   .version(packageData.version)
   .option('--dirname [name]', 'Set git directory', /^.*$/i, __dirname)
-  .option('-d, --deploy-feature [name]', 'Deploy feature to Test')
-  .option('-a, --approve-feature [name]', 'Approve feature')
-  .option('-r, --repprove-feature [name]', 'Repprove feature')
+  .option('-d, --deploy-feature', 'Deploy feature to Test')
+  .option('-a, --approve-feature', 'Approve feature')
+  .option('-r, --repprove-feature', 'Repprove feature')
   .parse(process.argv)
 
 const deployFeature = require('./commands/deploy-feature')
 
+const [feature] = commander.args
+
 if (commander.deployFeature) {
-  deployFeature(commander.dirname, commander.deployFeature)
+  deployFeature(commander.dirname, feature)
     .catch(handleError)
 }
 
 if (commander.approveFeature) {
-  deployFeature(commander.dirname, commander.approveFeature, true)
+  deployFeature(commander.dirname, feature, true)
     .catch(handleError)
 }
 
 if (commander.repproveFeature) {
-  deployFeature(commander.dirname, commander.repproveFeature, false, true)
+  deployFeature(commander.dirname, feature, false, true)
     .catch(handleError)
 }
 
