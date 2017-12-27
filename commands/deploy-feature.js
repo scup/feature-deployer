@@ -135,13 +135,11 @@ module.exports = async function deployFeature(options, injection) {
   const { dirname, feature, approve, repprove, maxBranches } = options
   const { gitPromissified, chalk, log } = Object.assign({}, dependencies, injection)
 
+  const resolvedDependencies = { git: gitPromissified(dirname), log, chalk }
+
   log(`Using dirname: ${chalk.bold.yellow(dirname)}`)
   log(`Starting deploy of feature ${chalk.bold.green(feature)}...`)
   log()
-
-  const git = gitPromissified(dirname)
-
-  const resolvedDependencies = { git, log, chalk }
 
   await updateProductionBranch(resolvedDependencies)
 
