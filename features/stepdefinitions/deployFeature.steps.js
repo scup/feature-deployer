@@ -41,7 +41,8 @@ When('I deploy the feature', () => {
 
   this.injection = {
     gitPromissified: () => this.git,
-    chalk: this.chalk
+    chalk: this.chalk,
+    log: () => ({})
   }
 
   return deployFeature(this.options, this.injection)
