@@ -48,7 +48,7 @@ async function pullProduction(git) {
   console.log()
 }
 
-async function createQABranch(git, chalk, feature, ignoreItem) {
+async function createQABranch(git, chalk, feature, ignoreItem, maxBranches) {
   const branches = await git.branch()
   const remoteQaBranch = branches.all.find((branch) => branch.match(/^remotes\/[^\/]*\/qa__.*/))
 
@@ -56,8 +56,14 @@ async function createQABranch(git, chalk, feature, ignoreItem) {
   if (remoteQaBranch) {
     const oldBranch = remoteQaBranch.replace(/^[^\/]*\/[^\/]*\//, '')
     const reduceFunction = ignoreItem ? removeDuplicated(feature) : removeDuplicated()
+
     const oldFeatures = oldBranch.replace('qa__', '').split('__')
+
     features = oldFeatures.concat(features).reduce(reduceFunction, [])
+  }
+
+  if (features.length > maxBranches) {
+    throw `QA can only hold up to ${maxBranches} features`
   }
 
   console.log(`Features to deploy in QA: ${chalk.green(features.join(' '))}`)
@@ -114,7 +120,7 @@ async function creteRCLink(git, chalk, feature) {
   console.log(`Create a pull request to RC: ${chalk.green(prUrl)}`)
 }
 
-module.exports = async function deployFeature({ dirname, feature, approve, repprove }, injection) {
+module.exports = async function deployFeature({ dirname, feature, approve, repprove, maxBranches }, injection) {
   const { gitPromissified, chalk } = Object.assign({}, dependencies, injection)
 
   console.log(`Using dirname: ${chalk.bold.yellow(dirname)}`)
@@ -125,7 +131,9 @@ module.exports = async function deployFeature({ dirname, feature, approve, reppr
 
   await pullProduction(git)
 
-  const { features, branches, branchQaName } = await createQABranch(git, chalk, feature, approve || repprove)
+  const ignoreItem = approve || repprove
+
+  const { features, branches, branchQaName } = await createQABranch(git, chalk, feature, ignoreItem, maxBranches)
 
   await mergeFeaturesIntoQA(git, features, branchQaName)
   await removeLocalBranches(git, branches, branchQaName)

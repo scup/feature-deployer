@@ -5,6 +5,8 @@ const commander = require('commander')
 
 const packageData = require('./package.json')
 
+const BRANCHES = process.env.FEATURES_UNDER_TEST || 3
+
 commander
   .version(packageData.version)
   .option('--dirname [name]', 'Set git directory', /^.*$/i, __dirname)
@@ -15,13 +17,18 @@ commander
 
 const deployFeature = require('./commands/deploy-feature')
 
-const [feature] = commander.args
+const [feature, maxBranches] = commander.args
 
 const options = {
   dirname: commander.dirname,
   feature,
   approve: commander.approveFeature,
-  repprove: commander.repproveFeature
+  repprove: commander.repproveFeature,
+  maxBranches: Number(maxBranches)
+}
+
+if (isNaN(options.maxBranches)) {
+  options.maxBranches = BRANCHES
 }
 
 deployFeature(options)
