@@ -1,4 +1,4 @@
-const simpleGitPromissified = require('simple-git/promise')
+const gitPromissified = require('simple-git/promise')
 const chalk = require('chalk')
 
 const removeDuplicated = (ignoreItem) => (items, item) => {
@@ -8,24 +8,24 @@ const removeDuplicated = (ignoreItem) => (items, item) => {
   return items
 }
 
-const mergeFeature = async (simpleGit, feature, branchQaName) => {
+const mergeFeature = async (git, feature, branchQaName) => {
   console.log(`Merging feature ${chalk.yellow(feature)} into QA...`)
 
-  await simpleGit.checkout([branchQaName])
-  await simpleGit.raw(['pull', 'origin', feature])
+  await git.checkout([branchQaName])
+  await git.raw(['pull', 'origin', feature])
 
   console.log(`Merged ${chalk.yellow(feature)} to QA`)
 }
 
-const removeBranch = async (simpleGit, branch, branchQaName) => {
+const removeBranch = async (git, branch, branchQaName) => {
   if (branch.match(/^remotes\/[^\/]*\/qa__.*/)) {
     const remoteBranch = branch.replace(/^remotes\/[^\/]*\//, '')
     console.log(`Removing branch ${chalk.yellow(remoteBranch)}`)
-    await simpleGit.push('origin', `:${remoteBranch}`)
+    await git.push('origin', `:${remoteBranch}`)
     console.log(`Branch removed!`)
   } else if (branch.match(/^qa__.*/gi) && branch !== branchQaName) {
     console.log(`Removing branch ${chalk.yellow(branch)}`)
-    await simpleGit.raw(['branch', '-D', branch])
+    await git.raw(['branch', '-D', branch])
     console.log(`Branch removed!`)
   }
 }
@@ -35,20 +35,20 @@ module.exports = async function deployFeature(dirname, feature, approve, repprov
   console.log(`Starting deploy of feature ${chalk.bold.green(feature)}...`)
   console.log()
 
-  const simpleGit = simpleGitPromissified(dirname)
+  const git = gitPromissified(dirname)
 
   console.log('Init Pull...')
 
-  await simpleGit.raw(['remote', 'prune', 'origin'])
-  await simpleGit.raw(['checkout', '-f'])
-  await simpleGit.fetch()
-  await simpleGit.checkout(['production'])
-  await simpleGit.pull()
+  await git.raw(['remote', 'prune', 'origin'])
+  await git.raw(['checkout', '-f'])
+  await git.fetch()
+  await git.checkout(['production'])
+  await git.pull()
 
   console.log('Pull complete!')
   console.log()
 
-  const branchs = await simpleGit.branch()
+  const branchs = await git.branch()
   const remoteQaBranch = branchs.all.find((branch) => branch.match(/^remotes\/[^\/]*\/qa__.*/))
 
   let features = [feature]
@@ -66,7 +66,7 @@ module.exports = async function deployFeature(dirname, feature, approve, repprov
   console.log(`Creating qa branch: ${chalk.green(branchQaName)}`)
 
   try {
-    await simpleGit.checkoutBranch(branchQaName, 'production')
+    await git.checkoutBranch(branchQaName, 'production')
   } catch (exception) {
     console.log(chalk.red('%s'), exception)
   }
@@ -77,7 +77,7 @@ module.exports = async function deployFeature(dirname, feature, approve, repprov
   console.log('Merging features to build QA...')
   for (let i = 0; i < features.length; i++) {
     const feature = features[i]
-    await mergeFeature(simpleGit, feature, branchQaName)
+    await mergeFeature(git, feature, branchQaName)
   }
   console.log('QA branch built!')
   console.log()
@@ -85,19 +85,19 @@ module.exports = async function deployFeature(dirname, feature, approve, repprov
   console.log('Removing local branches...')
   for (let i = 0; i < branchs.all.length; i++) {
     const branch = branchs.all[i]
-    await removeBranch(simpleGit, branch, branchQaName)
+    await removeBranch(git, branch, branchQaName)
   }
   console.log('Local branches removed.')
   console.log()
 
   console.log(`Pushing branch ${chalk.green(branchQaName)}`)
-  await simpleGit.push('origin', branchQaName)
+  await git.push('origin', branchQaName)
   console.log(`Branch pushed!`)
 
   const featureWithoutQa = feature.replace('_qa', '')
 
   if (approve) {
-    const remotes = await simpleGit.getRemotes(true)
+    const remotes = await git.getRemotes(true)
     const repositoryUrl = remotes.pop().refs.fetch.replace(/.*:([^\.]*).*/, '$1')
 
     const prUrl = `https://bitbucket.org/${repositoryUrl}/pull-requests/new?source=${featureWithoutQa}&t=1`
