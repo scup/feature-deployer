@@ -49,7 +49,7 @@ async function pullProduction({ git, log }) {
   log()
 }
 
-async function createQABranch(feature, ignoreItem, maxBranches, { git, chalk, log }) {
+async function createQABranch(feature, ignoreItem, maxBranches, approve, { git, chalk, log }) {
   const branches = await git.branch()
   const remoteQaBranch = branches.all.find((branch) => branch.match(/^remotes\/[^\/]*\/qa__.*/))
 
@@ -63,7 +63,7 @@ async function createQABranch(feature, ignoreItem, maxBranches, { git, chalk, lo
     features = oldFeatures.concat(features).reduce(reduceFunction, [])
   }
 
-  if (features.length > maxBranches) {
+  if (approve && features.length > maxBranches) {
     throw `QA can only hold up to ${maxBranches} features`
   }
 
@@ -137,7 +137,7 @@ module.exports = async function deployFeature(options, injection) {
 
   const ignoreItem = approve || repprove
 
-  const { features, branches, branchQaName } = await createQABranch(feature, ignoreItem, maxBranches, resolvedDependencies)
+  const { features, branches, branchQaName } = await createQABranch(feature, ignoreItem, maxBranches, approve, resolvedDependencies)
 
   await mergeFeaturesIntoQA(features, branchQaName, resolvedDependencies)
   await removeLocalBranches(branches, branchQaName, resolvedDependencies)
