@@ -17,20 +17,15 @@ const deployFeature = require('./commands/deploy-feature')
 
 const [feature] = commander.args
 
-if (commander.deployFeature) {
-  deployFeature(commander.dirname, feature)
-    .catch(handleError)
+const options = {
+  dirname: commander.dirname,
+  feature,
+  approve: commander.approveFeature,
+  repprove: commander.repproveFeature
 }
 
-if (commander.approveFeature) {
-  deployFeature(commander.dirname, feature, true)
-    .catch(handleError)
-}
-
-if (commander.repproveFeature) {
-  deployFeature(commander.dirname, feature, false, true)
-    .catch(handleError)
-}
+deployFeature(options)
+  .catch(handleError)
 
 function handleError (error) {
   console.log(chalk.red('%s'), error)

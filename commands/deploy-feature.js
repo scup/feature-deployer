@@ -1,6 +1,10 @@
 const gitPromissified = require('simple-git/promise')
 const chalk = require('chalk')
 
+const dependencies = {
+  gitPromissified
+}
+
 const removeDuplicated = (ignoreItem) => (items, item) => {
   if (item && items.indexOf(item) === -1 && item !== ignoreItem) {
     items.push(item)
@@ -30,7 +34,9 @@ const removeBranch = async (git, branch, branchQaName) => {
   }
 }
 
-module.exports = async function deployFeature(dirname, feature, approve, repprove) {
+module.exports = async function deployFeature({ dirname, feature, approve, repprove }, injection) {
+  const { gitPromissified } = Object.assign({}, dependencies, injection)
+
   console.log(`Using dirname: ${chalk.bold.yellow(dirname)}`)
   console.log(`Starting deploy of feature ${chalk.bold.green(feature)}...`)
   console.log()
