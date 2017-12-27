@@ -2,7 +2,8 @@ const gitPromissified = require('simple-git/promise')
 const chalk = require('chalk')
 
 const dependencies = {
-  gitPromissified
+  gitPromissified,
+  chalk
 }
 
 const removeDuplicated = (ignoreItem) => (items, item) => {
@@ -34,15 +35,7 @@ const removeBranch = async (git, branch, branchQaName) => {
   }
 }
 
-module.exports = async function deployFeature({ dirname, feature, approve, repprove }, injection) {
-  const { gitPromissified } = Object.assign({}, dependencies, injection)
-
-  console.log(`Using dirname: ${chalk.bold.yellow(dirname)}`)
-  console.log(`Starting deploy of feature ${chalk.bold.green(feature)}...`)
-  console.log()
-
-  const git = gitPromissified(dirname)
-
+async function pullProduction(git) {
   console.log('Init Pull...')
 
   await git.raw(['remote', 'prune', 'origin'])
@@ -53,14 +46,16 @@ module.exports = async function deployFeature({ dirname, feature, approve, reppr
 
   console.log('Pull complete!')
   console.log()
+}
 
-  const branchs = await git.branch()
-  const remoteQaBranch = branchs.all.find((branch) => branch.match(/^remotes\/[^\/]*\/qa__.*/))
+async function createQABranch(git, chalk, feature, ignoreItem) {
+  const branches = await git.branch()
+  const remoteQaBranch = branches.all.find((branch) => branch.match(/^remotes\/[^\/]*\/qa__.*/))
 
   let features = [feature]
   if (remoteQaBranch) {
     const oldBranch = remoteQaBranch.replace(/^[^\/]*\/[^\/]*\//, '')
-    const reduceFunction = approve || repprove ? removeDuplicated(feature) : removeDuplicated()
+    const reduceFunction = ignoreItem ? removeDuplicated(feature) : removeDuplicated()
     const oldFeatures = oldBranch.replace('qa__', '').split('__')
     features = oldFeatures.concat(features).reduce(reduceFunction, [])
   }
@@ -80,6 +75,10 @@ module.exports = async function deployFeature({ dirname, feature, approve, reppr
   console.log('Branch created!')
   console.log()
 
+  return { features, branches, branchQaName }
+}
+
+async function mergeFeaturesIntoQA(git, features, branchQaName) {
   console.log('Merging features to build QA...')
   for (let i = 0; i < features.length; i++) {
     const feature = features[i]
@@ -87,31 +86,57 @@ module.exports = async function deployFeature({ dirname, feature, approve, reppr
   }
   console.log('QA branch built!')
   console.log()
+}
 
+async function removeLocalBranches(git, branches, branchQaName) {
   console.log('Removing local branches...')
-  for (let i = 0; i < branchs.all.length; i++) {
-    const branch = branchs.all[i]
+  for (let i = 0; i < branches.all.length; i++) {
+    const branch = branches.all[i]
     await removeBranch(git, branch, branchQaName)
   }
   console.log('Local branches removed.')
   console.log()
+}
 
+async function pushQA(git, chalk, branchQaName) {
   console.log(`Pushing branch ${chalk.green(branchQaName)}`)
   await git.push('origin', branchQaName)
   console.log(`Branch pushed!`)
+  console.log()
+}
 
+async function creteRCLink(git, chalk, feature) {
   const featureWithoutQa = feature.replace('_qa', '')
+  const remotes = await git.getRemotes(true)
+  const repositoryUrl = remotes.pop().refs.fetch.replace(/.*:([^\.]*).*/, '$1')
+
+  const prUrl = `https://bitbucket.org/${repositoryUrl}/pull-requests/new?source=${featureWithoutQa}&t=1`
+  console.log(`Create a pull request to RC: ${chalk.green(prUrl)}`)
+}
+
+module.exports = async function deployFeature({ dirname, feature, approve, repprove }, injection) {
+  const { gitPromissified, chalk } = Object.assign({}, dependencies, injection)
+
+  console.log(`Using dirname: ${chalk.bold.yellow(dirname)}`)
+  console.log(`Starting deploy of feature ${chalk.bold.green(feature)}...`)
+  console.log()
+
+  const git = gitPromissified(dirname)
+
+  await pullProduction(git)
+
+  const { features, branches, branchQaName } = await createQABranch(git, chalk, feature, approve || repprove)
+
+  await mergeFeaturesIntoQA(git, features, branchQaName)
+  await removeLocalBranches(git, branches, branchQaName)
+  await pushQA(git, chalk, branchQaName)
 
   if (approve) {
-    const remotes = await git.getRemotes(true)
-    const repositoryUrl = remotes.pop().refs.fetch.replace(/.*:([^\.]*).*/, '$1')
-
-    const prUrl = `https://bitbucket.org/${repositoryUrl}/pull-requests/new?source=${featureWithoutQa}&t=1`
-    console.log(`Create a pull request to RC: ${chalk.green(prUrl)}`)
+    await creteRCLink(git, chalk, feature)
   }
 
   if (repprove) {
-    console.log(`REPROVED and removed from qa`)
+    console.log(`${chalk.green('REPROVED')} and removed from qa`)
   }
 
   console.log(chalk.bold.green('OK!'))
