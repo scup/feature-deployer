@@ -49,9 +49,13 @@ async function pullProduction({ git, log }) {
   log()
 }
 
+function matchBranch (branch) {
+  return branch.match(/^remotes\/[^\/]*\/qa__.*/)
+}
+
 async function createQABranch(feature, ignoreItem, maxBranches, approve, { git, chalk, log }) {
   const branches = await git.branch()
-  const remoteQaBranch = branches.all.find((branch) => branch.match(/^remotes\/[^\/]*\/qa__.*/))
+  const remoteQaBranch = branches.all.find(matchBranch)
 
   let features = [feature]
   if (remoteQaBranch) {
