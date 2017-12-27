@@ -36,7 +36,7 @@ const removeBranch = async (branch, branchQaName, { git, log }) => {
   log(`Branch removed!`)
 }
 
-async function pullProduction({ git, log }) {
+async function updateProductionBranch({ git, log }) {
   log('Init Pull...')
 
   await git.raw(['remote', 'prune', 'origin'])
@@ -143,7 +143,7 @@ module.exports = async function deployFeature(options, injection) {
 
   const resolvedDependencies = { git, log, chalk }
 
-  await pullProduction(resolvedDependencies)
+  await updateProductionBranch(resolvedDependencies)
 
   const ignoreItem = approve || repprove
 
