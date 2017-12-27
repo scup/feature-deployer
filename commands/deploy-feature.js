@@ -53,19 +53,24 @@ function matchBranch (branch) {
   return branch.match(/^remotes\/[^\/]*\/qa__.*/)
 }
 
+function createFeatures(feature, remoteQaBranch, ignoreItem) {
+  const features = [feature]
+
+  if (!remoteQaBranch) return features
+
+  const oldBranch = remoteQaBranch.replace(/^[^\/]*\/[^\/]*\//, '')
+  const reduceFunction = ignoreItem ? removeDuplicated(feature) : removeDuplicated()
+
+  const oldFeatures = oldBranch.replace('qa__', '').split('__')
+
+  return oldFeatures.concat(features).reduce(reduceFunction, [])
+}
+
 async function createQABranch(feature, ignoreItem, maxBranches, approve, { git, chalk, log }) {
   const branches = await git.branch()
   const remoteQaBranch = branches.all.find(matchBranch)
 
-  let features = [feature]
-  if (remoteQaBranch) {
-    const oldBranch = remoteQaBranch.replace(/^[^\/]*\/[^\/]*\//, '')
-    const reduceFunction = ignoreItem ? removeDuplicated(feature) : removeDuplicated()
-
-    const oldFeatures = oldBranch.replace('qa__', '').split('__')
-
-    features = oldFeatures.concat(features).reduce(reduceFunction, [])
-  }
+  const features = createFeatures(feature, remoteQaBranch, ignoreItem)
 
   if (approve && features.length > maxBranches) {
     throw `QA can only hold up to ${maxBranches} features`
