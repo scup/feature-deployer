@@ -14,7 +14,7 @@ const removeDuplicated = (ignoreItem) => (items, item) => {
   return items
 }
 
-const mergeFeature = async (feature, branchQaName, { git, log }) => {
+const mergeFeature = async (feature, branchQaName, { git, log, chalk }) => {
   log(`Merging feature ${chalk.yellow(feature)} into QA...`)
 
   await git.checkout([branchQaName])
@@ -23,7 +23,7 @@ const mergeFeature = async (feature, branchQaName, { git, log }) => {
   log(`Merged ${chalk.yellow(feature)} to QA`)
 }
 
-const removeBranch = async (branch, branchQaName, { git, log }) => {
+const removeBranch = async (branch, branchQaName, { git, log, chalk }) => {
   if (branch.match(/^remotes\/[^\/]*\/qa__.*/)) {
     const remoteBranch = branch.replace(/^remotes\/[^\/]*\//, '')
     log(`Removing branch ${chalk.yellow(remoteBranch)}`)
@@ -94,21 +94,21 @@ async function createQABranch(feature, ignoreItem, maxBranches, approve, { git, 
   return { features, branches, branchQaName }
 }
 
-async function mergeFeaturesIntoQA(features, branchQaName, { git, log }) {
+async function mergeFeaturesIntoQA(features, branchQaName, { git, log, chalk }) {
   log('Merging features to build QA...')
   for (let i = 0; i < features.length; i++) {
     const feature = features[i]
-    await mergeFeature(feature, branchQaName, { git, log })
+    await mergeFeature(feature, branchQaName, { git, log, chalk })
   }
   log('QA branch built!')
   log()
 }
 
-async function removeLocalBranches(branches, branchQaName, { git, log }) {
+async function removeLocalBranches(branches, branchQaName, { git, log, chalk }) {
   log('Removing local branches...')
   for (let i = 0; i < branches.all.length; i++) {
     const branch = branches.all[i]
-    await removeBranch(branch, branchQaName, { git, log })
+    await removeBranch(branch, branchQaName, { git, log, chalk })
   }
   log('Local branches removed.')
   log()
