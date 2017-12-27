@@ -12,3 +12,9 @@ Feature: Deploy Feature
     Then the QA branch becomes qa__SCARY
       And the feature is not sent to RC
       And the feature is not repproved
+
+  Scenario: Approve
+    When I approve the feature
+    Then the QA branch becomes qa__SCARY
+      And a link is created to RC
+      And the feature is not repproved

@@ -153,9 +153,7 @@ module.exports = async function deployFeature(options, injection) {
 
   if (approve) {
     await creteRCLink(feature, resolvedDependencies)
-  }
-
-  if (repprove) {
+  } else if (repprove) {
     log(`${chalk.green('REPROVED')} and removed from qa`)
   }
 
