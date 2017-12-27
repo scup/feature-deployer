@@ -128,6 +128,7 @@ async function creteRCLink(feature, { git, chalk, log }) {
 
   const prUrl = `https://bitbucket.org/${repositoryUrl}/pull-requests/new?source=${featureWithoutQa}&t=1`
   log(`Create a pull request to RC: ${chalk.green(prUrl)}`)
+  log()
 }
 
 module.exports = async function deployFeature(options, injection) {
