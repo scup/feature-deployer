@@ -28,12 +28,12 @@ const removeBranch = async (branch, branchQaName, { git, log, chalk }) => {
     const remoteBranch = branch.replace(/^remotes\/[^\/]*\//, '')
     log(`Removing branch ${chalk.yellow(remoteBranch)}`)
     await git.push('origin', `:${remoteBranch}`)
+    log(`Branch removed!`)
   } else if (branch.match(/^qa__.*/gi) && branch !== branchQaName) {
     log(`Removing branch ${chalk.yellow(branch)}`)
     await git.raw(['branch', '-D', branch])
+    log(`Branch removed!`)
   }
-
-  log(`Branch removed!`)
 }
 
 async function updateProductionBranch({ git, log }) {
