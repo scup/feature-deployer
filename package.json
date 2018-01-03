@@ -1,15 +1,48 @@
 {
   "dependencies": {
+    "chalk": "^2.1.0",
     "commander": "^2.11.0",
-    "simple-git": "^1.75.0",
-    "chalk": "^2.1.0"
+    "simple-git": "^1.75.0"
   },
   "name": "feature-deployer",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "main": "feature-deployer.js",
   "bin": {
     "feature-deployer": "feature-deployer.js"
   },
+  "scripts": {
+    "integration": "cucumberjs",
+    "integration:watch": "yarn integration && watch -p 'commands/*.js' -c 'yarn integration'",
+    "cover": "nyc yarn integration",
+    "validate": "yarn cover"
+  },
   "author": "Lucas Barboza <lucas.barboza@sprinklr.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "cucumber": "^2.0.0-rc.7",
+    "nyc": "^8.4.0",
+    "sinon": "^4.1.3",
+    "watch-cli": "^0.2.3"
+  },
+  "nyc": {
+    "check-coverage": true,
+    "per-file": true,
+    "cache": true,
+    "all": true,
+    "exclude": [
+      "feature-deployer.js",
+      "node_modules",
+      "coverage"
+    ],
+    "lines": 80,
+    "statements": 80,
+    "functions": 85,
+    "branches": 35,
+    "reporter": [
+      "lcov",
+      "text",
+      "text-summary"
+    ]
+  }
 }

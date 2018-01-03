@@ -1,5 +1,11 @@
-const simpleGitPromissified = require('simple-git/promise')
+const gitPromissified = require('simple-git/promise')
 const chalk = require('chalk')
+
+const dependencies = {
+  gitPromissified,
+  chalk,
+  log: console.log
+}
 
 const removeDuplicated = (ignoreItem) => (items, item) => {
   if (item && items.indexOf(item) === -1 && item !== ignoreItem) {
@@ -8,105 +14,148 @@ const removeDuplicated = (ignoreItem) => (items, item) => {
   return items
 }
 
-const mergeFeature = async (simpleGit, feature, branchQaName) => {
-  console.log(`Merging feature ${chalk.yellow(feature)} into QA...`)
+const mergeFeature = async (feature, branchQaName, { git, log, chalk }) => {
+  log(`Merging feature ${chalk.yellow(feature)} into QA...`)
 
-  await simpleGit.checkout([branchQaName])
-  await simpleGit.raw(['pull', 'origin', feature])
+  await git.checkout([branchQaName])
+  await git.raw(['pull', 'origin', feature])
 
-  console.log(`Merged ${chalk.yellow(feature)} to QA`)
+  log(`Merged ${chalk.yellow(feature)} to QA`)
 }
 
-const removeBranch = async (simpleGit, branch, branchQaName) => {
+const removeBranch = async (branch, branchQaName, { git, log, chalk }) => {
   if (branch.match(/^remotes\/[^\/]*\/qa__.*/)) {
     const remoteBranch = branch.replace(/^remotes\/[^\/]*\//, '')
-    console.log(`Removing branch ${chalk.yellow(remoteBranch)}`)
-    await simpleGit.push('origin', `:${remoteBranch}`)
-    console.log(`Branch removed!`)
+    log(`Removing branch ${chalk.yellow(remoteBranch)}`)
+    await git.push('origin', `:${remoteBranch}`)
+    log(`Branch removed!`)
   } else if (branch.match(/^qa__.*/gi) && branch !== branchQaName) {
-    console.log(`Removing branch ${chalk.yellow(branch)}`)
-    await simpleGit.raw(['branch', '-D', branch])
-    console.log(`Branch removed!`)
+    log(`Removing branch ${chalk.yellow(branch)}`)
+    await git.raw(['branch', '-D', branch])
+    log(`Branch removed!`)
   }
 }
 
-module.exports = async function deployFeature(dirname, feature, approve, repprove) {
-  console.log(`Using dirname: ${chalk.bold.yellow(dirname)}`)
-  console.log(`Starting deploy of feature ${chalk.bold.green(feature)}...`)
-  console.log()
+async function updateProductionBranch({ git, log }) {
+  log('Init Pull...')
 
-  const simpleGit = simpleGitPromissified(dirname)
+  await git.raw(['remote', 'prune', 'origin'])
+  await git.raw(['checkout', '-f'])
+  await git.fetch()
+  await git.checkout(['production'])
+  await git.pull()
 
-  console.log('Init Pull...')
+  log('Pull complete!')
+  log()
+}
 
-  await simpleGit.raw(['remote', 'prune', 'origin'])
-  await simpleGit.raw(['checkout', '-f'])
-  await simpleGit.fetch()
-  await simpleGit.checkout(['production'])
-  await simpleGit.pull()
+function matchBranch (branch) {
+  return branch.match(/^remotes\/[^\/]*\/qa__.*/)
+}
 
-  console.log('Pull complete!')
-  console.log()
+function createFeatures(feature, remoteQaBranch, ignoreItem) {
+  const features = [feature]
 
-  const branchs = await simpleGit.branch()
-  const remoteQaBranch = branchs.all.find((branch) => branch.match(/^remotes\/[^\/]*\/qa__.*/))
+  if (!remoteQaBranch) return features
 
-  let features = [feature]
-  if (remoteQaBranch) {
-    const oldBranch = remoteQaBranch.replace(/^[^\/]*\/[^\/]*\//, '')
-    const reduceFunction = approve || repprove ? removeDuplicated(feature) : removeDuplicated()
-    const oldFeatures = oldBranch.replace('qa__', '').split('__')
-    features = oldFeatures.concat(features).reduce(reduceFunction, [])
+  const oldBranch = remoteQaBranch.replace(/^[^\/]*\/[^\/]*\//, '')
+  const reduceFunction = ignoreItem ? removeDuplicated(feature) : removeDuplicated()
+
+  const oldFeatures = oldBranch.replace('qa__', '').split('__')
+
+  return oldFeatures.concat(features).reduce(reduceFunction, [])
+}
+
+async function createQABranch(feature, ignoreItem, maxBranches, approve, { git, chalk, log }) {
+  const branches = await git.branch()
+  const remoteQaBranch = branches.all.find(matchBranch)
+
+  const features = createFeatures(feature, remoteQaBranch, ignoreItem)
+
+  if (approve && features.length > maxBranches) {
+    throw `QA can only hold up to ${maxBranches} features`
   }
 
-  console.log(`Features to deploy in QA: ${chalk.green(features.join(' '))}`)
+  log(`Features to deploy in QA: ${chalk.green(features.join(' '))}`)
 
   const branchQaName = `qa__${features.join('__')}`
 
-  console.log(`Creating qa branch: ${chalk.green(branchQaName)}`)
+  log(`Creating qa branch: ${chalk.green(branchQaName)}`)
 
   try {
-    await simpleGit.checkoutBranch(branchQaName, 'production')
+    await git.checkoutBranch(branchQaName, 'production')
   } catch (exception) {
-    console.log(chalk.red('%s'), exception)
+    log(chalk.red('%s'), exception)
   }
 
-  console.log('Branch created!')
-  console.log()
+  log('Branch created!')
+  log()
 
-  console.log('Merging features to build QA...')
+  return { features, branches, branchQaName }
+}
+
+async function mergeFeaturesIntoQA(features, branchQaName, { git, log, chalk }) {
+  log('Merging features to build QA...')
   for (let i = 0; i < features.length; i++) {
     const feature = features[i]
-    await mergeFeature(simpleGit, feature, branchQaName)
+    await mergeFeature(feature, branchQaName, { git, log, chalk })
   }
-  console.log('QA branch built!')
-  console.log()
+  log('QA branch built!')
+  log()
+}
 
-  console.log('Removing local branches...')
-  for (let i = 0; i < branchs.all.length; i++) {
-    const branch = branchs.all[i]
-    await removeBranch(simpleGit, branch, branchQaName)
+async function removeLocalBranches(branches, branchQaName, { git, log, chalk }) {
+  log('Removing local branches...')
+  for (let i = 0; i < branches.all.length; i++) {
+    const branch = branches.all[i]
+    await removeBranch(branch, branchQaName, { git, log, chalk })
   }
-  console.log('Local branches removed.')
-  console.log()
+  log('Local branches removed.')
+  log()
+}
 
-  console.log(`Pushing branch ${chalk.green(branchQaName)}`)
-  await simpleGit.push('origin', branchQaName)
-  console.log(`Branch pushed!`)
+async function pushQA(branchQaName, { git, chalk, log }) {
+  log(`Pushing branch ${chalk.green(branchQaName)}`)
+  await git.push('origin', branchQaName)
+  log(`Branch pushed!`)
+  log()
+}
 
+async function creteRCLink(feature, { git, chalk, log }) {
   const featureWithoutQa = feature.replace('_qa', '')
+  const remotes = await git.getRemotes(true)
+  const repositoryUrl = remotes.pop().refs.fetch.replace(/.*:([^\.]*).*/, '$1')
+
+  const prUrl = `https://bitbucket.org/${repositoryUrl}/pull-requests/new?source=${featureWithoutQa}&t=1`
+  log(`Create a pull request to RC: ${chalk.green(prUrl)}`)
+  log()
+}
+
+module.exports = async function deployFeature(options, injection) {
+  const { dirname, feature, approve, repprove, maxBranches } = options
+  const { gitPromissified, chalk, log } = Object.assign({}, dependencies, injection)
+
+  const resolvedDependencies = { git: gitPromissified(dirname), log, chalk }
+
+  log(`Using dirname: ${chalk.bold.yellow(dirname)}`)
+  log(`Starting deploy of feature ${chalk.bold.green(feature)}...`)
+  log()
+
+  await updateProductionBranch(resolvedDependencies)
+
+  const ignoreItem = approve || repprove
+
+  const { features, branches, branchQaName } = await createQABranch(feature, ignoreItem, maxBranches, approve, resolvedDependencies)
+
+  await mergeFeaturesIntoQA(features, branchQaName, resolvedDependencies)
+  await removeLocalBranches(branches, branchQaName, resolvedDependencies)
+  await pushQA(branchQaName, resolvedDependencies)
 
   if (approve) {
-    const remotes = await simpleGit.getRemotes(true)
-    const repositoryUrl = remotes.pop().refs.fetch.replace(/.*:([^\.]*).*/, '$1')
-
-    const prUrl = `https://bitbucket.org/${repositoryUrl}/pull-requests/new?source=${featureWithoutQa}&t=1`
-    console.log(`Create a pull request to RC: ${chalk.green(prUrl)}`)
+    await creteRCLink(feature, resolvedDependencies)
+  } else if (repprove) {
+    log(`${chalk.green('REPROVED')} and removed from qa`)
   }
 
-  if (repprove) {
-    console.log(`REPROVED and removed from qa`)
-  }
-
-  console.log(chalk.bold.green('OK!'))
+  log(chalk.bold.green('OK!'))
 }

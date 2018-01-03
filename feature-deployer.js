@@ -5,30 +5,34 @@ const commander = require('commander')
 
 const packageData = require('./package.json')
 
+const BRANCHES = process.env.FEATURES_UNDER_TEST || 3
+
 commander
   .version(packageData.version)
   .option('--dirname [name]', 'Set git directory', /^.*$/i, __dirname)
-  .option('-d, --deploy-feature [name]', 'Deploy feature to Test')
-  .option('-a, --approve-feature [name]', 'Approve feature')
-  .option('-r, --repprove-feature [name]', 'Repprove feature')
+  .option('-d, --deploy-feature', 'Deploy feature to Test')
+  .option('-a, --approve-feature', 'Approve feature')
+  .option('-r, --repprove-feature', 'Repprove feature')
   .parse(process.argv)
 
 const deployFeature = require('./commands/deploy-feature')
 
-if (commander.deployFeature) {
-  deployFeature(commander.dirname, commander.deployFeature)
-    .catch(handleError)
+const [feature, maxBranches] = commander.args
+
+const options = {
+  dirname: commander.dirname,
+  feature,
+  approve: commander.approveFeature,
+  repprove: commander.repproveFeature,
+  maxBranches: Number(maxBranches)
 }
 
-if (commander.approveFeature) {
-  deployFeature(commander.dirname, commander.approveFeature, true)
-    .catch(handleError)
+if (isNaN(options.maxBranches)) {
+  options.maxBranches = BRANCHES
 }
 
-if (commander.repproveFeature) {
-  deployFeature(commander.dirname, commander.repproveFeature, false, true)
-    .catch(handleError)
-}
+deployFeature(options)
+  .catch(handleError)
 
 function handleError (error) {
   console.log(chalk.red('%s'), error)
