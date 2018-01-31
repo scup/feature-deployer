@@ -1,12 +1,10 @@
 {
-  "dependencies": {
-    "chalk": "^2.1.0",
-    "commander": "^2.11.0",
-    "simple-git": "^1.75.0"
-  },
   "name": "feature-deployer",
   "version": "1.1.1",
   "main": "feature-deployer.js",
+  "author": "Tech team <infra@scup.com>",
+  "license": "Commercial",
+  "private": true,
   "bin": {
     "feature-deployer": "feature-deployer.js"
   },
@@ -16,8 +14,14 @@
     "cover": "nyc yarn integration",
     "validate": "yarn cover"
   },
-  "author": "Tech team <infra@scup.com>",
-  "license": "MIT",
+  "engines": {
+    "node": ">=9.4.0"
+  },
+  "dependencies": {
+    "chalk": "^2.1.0",
+    "commander": "^2.11.0",
+    "simple-git": "^1.75.0"
+  },
   "devDependencies": {
     "chai": "^4.1.2",
     "cucumber": "^4.0.0",
