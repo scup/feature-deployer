@@ -1,1 +1,5 @@
-# feature-deployer
+# Feature Deployer
+## Installing
+```
+npm install -g scup/feature-deployer
+```
