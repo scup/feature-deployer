@@ -12,7 +12,9 @@
     "integration": "TZ=utc NODE_PATH=./ cucumber-js",
     "integration:watch": "yarn integration && watch -p 'commands/*.js' -c 'yarn integration'",
     "cover": "nyc yarn integration",
-    "validate": "yarn cover"
+    "lint": "standard -v \"commands/**/*.js\" \"features/**/*.js\" \"Domain/**/*.js\" \"Infra/**/*.js\"",
+    "lint:fix": "yarn lint --fix",
+    "validate": "yarn lint && yarn cover"
   },
   "engines": {
     "node": ">=9.4.0"
@@ -27,6 +29,7 @@
     "cucumber": "^4.0.0",
     "nyc": "^11.4.1",
     "sinon": "^4.1.3",
+    "standard": "^10.0.3",
     "watch-cli": "^0.2.3"
   },
   "nyc": {

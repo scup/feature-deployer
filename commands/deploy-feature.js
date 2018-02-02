@@ -36,7 +36,7 @@ const removeBranch = async (branch, branchQaName, { git, log, chalk }) => {
   }
 }
 
-async function updateProductionBranch({ git, log }) {
+async function updateProductionBranch ({ git, log }) {
   log('Init Pull...')
 
   await git.raw(['remote', 'prune', 'origin'])
@@ -53,7 +53,7 @@ function matchBranch (branch) {
   return branch.match(/^remotes\/[^\/]*\/qa__.*/)
 }
 
-function createFeatures(feature, remoteQaBranch, ignoreItem) {
+function createFeatures (feature, remoteQaBranch, ignoreItem) {
   const features = [feature]
 
   if (!remoteQaBranch) return features
@@ -66,7 +66,7 @@ function createFeatures(feature, remoteQaBranch, ignoreItem) {
   return oldFeatures.concat(features).reduce(reduceFunction, [])
 }
 
-async function createQABranch(feature, ignoreItem, maxBranches, approve, { git, chalk, log }) {
+async function createQABranch (feature, ignoreItem, maxBranches, approve, { git, chalk, log }) {
   const branches = await git.branch()
   const remoteQaBranch = branches.all.find(matchBranch)
 
@@ -94,7 +94,7 @@ async function createQABranch(feature, ignoreItem, maxBranches, approve, { git, 
   return { features, branches, branchQaName }
 }
 
-async function mergeFeaturesIntoQA(features, branchQaName, { git, log, chalk }) {
+async function mergeFeaturesIntoQA (features, branchQaName, { git, log, chalk }) {
   log('Merging features to build QA...')
   for (let i = 0; i < features.length; i++) {
     const feature = features[i]
@@ -104,7 +104,7 @@ async function mergeFeaturesIntoQA(features, branchQaName, { git, log, chalk }) 
   log()
 }
 
-async function removeLocalBranches(branches, branchQaName, { git, log, chalk }) {
+async function removeLocalBranches (branches, branchQaName, { git, log, chalk }) {
   log('Removing local branches...')
   for (let i = 0; i < branches.all.length; i++) {
     const branch = branches.all[i]
@@ -114,14 +114,14 @@ async function removeLocalBranches(branches, branchQaName, { git, log, chalk }) 
   log()
 }
 
-async function pushQA(branchQaName, { git, chalk, log }) {
+async function pushQA (branchQaName, { git, chalk, log }) {
   log(`Pushing branch ${chalk.green(branchQaName)}`)
   await git.push('origin', branchQaName)
   log(`Branch pushed!`)
   log()
 }
 
-async function creteRCLink(feature, { git, chalk, log }) {
+async function creteRCLink (feature, { git, chalk, log }) {
   const featureWithoutQa = feature.replace('_qa', '')
   const remotes = await git.getRemotes(true)
   const repositoryUrl = remotes.pop().refs.fetch.replace(/.*:([^\.]*).*/, '$1')
@@ -131,7 +131,7 @@ async function creteRCLink(feature, { git, chalk, log }) {
   log()
 }
 
-module.exports = async function deployFeature(options, injection) {
+module.exports = async function deployFeature (options, injection) {
   const { dirname, feature, approve, repprove, maxBranches } = options
   const { gitPromissified, chalk, log } = Object.assign({}, dependencies, injection)
 

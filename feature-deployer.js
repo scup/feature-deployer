@@ -67,6 +67,7 @@ featureDeployerCommander.version(packageData.version)
 //   })
 
 module.exports = function (consoleArguments) {
+  require('./gitClient').pull('master')
   console.log(consoleArguments);
   const execution = featureDeployerCommander.parse(consoleArguments)
   console.log(execution.args);
