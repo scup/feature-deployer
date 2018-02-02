@@ -24,8 +24,8 @@ const mergeFeature = async (feature, branchQaName, { git, log, chalk }) => {
 }
 
 const removeBranch = async (branch, branchQaName, { git, log, chalk }) => {
-  if (branch.match(/^remotes\/[^\/]*\/qa__.*/)) {
-    const remoteBranch = branch.replace(/^remotes\/[^\/]*\//, '')
+  if (branch.match(/^remotes\/[^/]*\/qa__.*/)) {
+    const remoteBranch = branch.replace(/^remotes\/[^/]*\//, '')
     log(`Removing branch ${chalk.yellow(remoteBranch)}`)
     await git.push('origin', `:${remoteBranch}`)
     log(`Branch removed!`)
@@ -50,7 +50,7 @@ async function updateProductionBranch ({ git, log }) {
 }
 
 function matchBranch (branch) {
-  return branch.match(/^remotes\/[^\/]*\/qa__.*/)
+  return branch.match(/^remotes\/[^/]*\/qa__.*/)
 }
 
 function createFeatures (feature, remoteQaBranch, ignoreItem) {
@@ -58,7 +58,7 @@ function createFeatures (feature, remoteQaBranch, ignoreItem) {
 
   if (!remoteQaBranch) return features
 
-  const oldBranch = remoteQaBranch.replace(/^[^\/]*\/[^\/]*\//, '')
+  const oldBranch = remoteQaBranch.replace(/^[^/]*\/[^/]*\//, '')
   const reduceFunction = ignoreItem ? removeDuplicated(feature) : removeDuplicated()
 
   const oldFeatures = oldBranch.replace('qa__', '').split('__')
@@ -73,7 +73,7 @@ async function createQABranch (feature, ignoreItem, maxBranches, approve, { git,
   const features = createFeatures(feature, remoteQaBranch, ignoreItem)
 
   if (approve && features.length > maxBranches) {
-    throw `QA can only hold up to ${maxBranches} features`
+    throw new Error(`QA can only hold up to ${maxBranches} features`)
   }
 
   log(`Features to deploy in QA: ${chalk.green(features.join(' '))}`)
@@ -124,7 +124,7 @@ async function pushQA (branchQaName, { git, chalk, log }) {
 async function creteRCLink (feature, { git, chalk, log }) {
   const featureWithoutQa = feature.replace('_qa', '')
   const remotes = await git.getRemotes(true)
-  const repositoryUrl = remotes.pop().refs.fetch.replace(/.*:([^\.]*).*/, '$1')
+  const repositoryUrl = remotes.pop().refs.fetch.replace(/.*:([^.]*).*/, '$1')
 
   const prUrl = `https://bitbucket.org/${repositoryUrl}/pull-requests/new?source=${featureWithoutQa}&t=1`
   log(`Create a pull request to RC: ${chalk.green(prUrl)}`)
