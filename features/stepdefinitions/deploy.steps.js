@@ -1,21 +1,56 @@
 const { Given, When, Then } = require('cucumber')
-// const { spy } = require('sinon')
+const { useFakeTimers } = require('sinon')
 // const { expect } = require('chai')
 
-const deployFeature = require('commands/deploy-feature')
+const featureDeployer = require('feature-deployer')
 
-Given(/^the branch ([^\s]+)$/, function(branch) {
-  console.log(branch)
-  // callback(null, 'pending')
+Given('Now is {int}', function (timestamp) {
+  this.clock = useFakeTimers(timestamp)
 })
 
-Given('the directory is set to dirname', function() {
+function executeCommandStep (command) {
+  return featureDeployer(['node', 'feature-deployer'].concat(command.split(' ')))
+}
 
+When(/^I execute the command (deploy[\s-][^\s]+) to deploy$/, executeCommandStep)
+When(/^I execute the command (deploy[\s-][^\s]+ [^\s]+) to deploy$/, executeCommandStep) //with description argument
+
+Then('It downloads the last version of the code', function (callback) {
+  callback(null, 'pending')
 })
 
-When('I deploy the feature', function () {
-
+Then('It switches to branch', function (callback) {
+  callback(null, 'pending')
 })
+
+Then(/^Create the tag (.+)$/, function(gitTag, callback) {
+  // console.log('#'.repeat(80))
+  // console.log(gitTag)
+  // console.log('#'.repeat(80))
+  callback(null, 'pending')
+})
+
+Then('Upload the created tag to server', function (callback) {
+  callback(null, 'pending')
+})
+// deploy rc
+// deploy rc description
+// deploy-rc
+// deploy staging
+// deploy-prod description
+
+// Given(/^the branch ([^\s]+)$/, function(branch) {
+//   console.log(branch)
+//   // callback(null, 'pending')
+// })
+//
+// Given('the directory is set to dirname', function() {
+//
+// })
+//
+// When('I deploy the feature', function () {
+//
+// })
 
 // function createGit() {
 //   const remote = {

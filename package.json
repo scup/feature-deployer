@@ -9,7 +9,7 @@
     "feature-deployer": "feature-deployer-bin.js"
   },
   "scripts": {
-    "integration": "cucumberjs",
+    "integration": "TZ=utc NODE_PATH=./ cucumber-js",
     "integration:watch": "yarn integration && watch -p 'commands/*.js' -c 'yarn integration'",
     "cover": "nyc yarn integration",
     "validate": "yarn cover"

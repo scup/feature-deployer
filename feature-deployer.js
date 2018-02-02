@@ -1,64 +1,77 @@
-#!/usr/bin/env node
-
 const chalk = require('chalk')
-const program = require('commander')
-
+const featureDeployerCommander = require('commander')
 const packageData = require('./package.json')
 
-program
-  .version(packageData.version)
+featureDeployerCommander.version(packageData.version)
 
-program.foobar = '2'
+// program.foobar = '2'
 
-function a (_, t) {
-  return t + 1
-}
+// function a (c, t) {
+//   console.log(c)
+//   return t.concat(c)
+// }
 
-program
-  .option('-C, --chdir <path>', 'change the working directory')
-  .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
-  .option('-T, --no-tests', 'ignore test hook', )
-  .option('-v, --verbose', 'A value that can be increased', a.bind(program), 0)
+// feature-deployer to-test BRANCH [env]
+// feature-deployer test BRANCH [env]
 
-program
-  .command('setup [b] [env] [bla]')
-  .description('run setup commands for all envs')
-  .option("-s, --setup_mode [mode]", "Which setup mode to use")
-  .action(function(branch, env, bla, options){
-    console.log('foobar:', options.parent.foobar)
-    console.log('verbose:', options.parent.verbose)
-    var mode = options.setup_mode || "normal"
-    env = env || 'all'
-    console.log('setup for %s env(s) with %s mode in branch %s', env, mode, branch)
-  })
+// program
+//   .option('-C, --chdir <path>', 'change the working directory')
+//   .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
+//   .option('-T, --no-tests', 'ignore test hook', )
+//   .option('-v, --verbose [a]', 'A value that can be increased', a.bind(program), [])
+//
+// program
+//   .command('setup [b] [env] [bla]')
+//   .description('run setup commands for all envs')
+//   .option("-s, --setup_mode [mode]", "Which setup mode to use")
+//   .action(function(branch, env, bla, options){
+//     console.log('foobar:', options.parent.foobar)
+//     console.log('verbose:', options.parent.verbose)
+//     var mode = options.setup_mode || "normal"
+//     env = env || 'all'
+//     console.log('setup for %s env(s) with %s mode in branch %s', env, mode, branch)
+//   })
+//
+// program
+//   .command('exec <cmd>')
+//   .alias('ex')
+//   .description('execute the given remote cmd')
+//   .option("-e, --exec_mode <mode>", "Which exec mode to use")
+//   .action(function(cmd, options){
+//     console.log('exec "%s" using %s mode', cmd, options.exec_mode)
+//   }).on('--help', function() {
+//     console.log()
+//     console.log('  Examples:')
+//     console.log()
+//     console.log('    $ deploy exec sequential')
+//     console.log('    $ deploy exec async')
+//     console.log()
+//   })
+//
+// program
+//   .command('*')
+//   .action(function(){
+//     const options = Array.from(arguments).pop()
+//     // console.log(chalk.red('a'))
+//     console.log(chalk.keyword('orange')('Yay for orange colored text!'))
+//     options.parent.help()
+//   })
 
-program
-  .command('exec <cmd>')
-  .alias('ex')
-  .description('execute the given remote cmd')
-  .option("-e, --exec_mode <mode>", "Which exec mode to use")
-  .action(function(cmd, options){
-    console.log('exec "%s" using %s mode', cmd, options.exec_mode)
-  }).on('--help', function() {
-    console.log()
-    console.log('  Examples:')
-    console.log()
-    console.log('    $ deploy exec sequential')
-    console.log('    $ deploy exec async')
-    console.log()
-  })
-
-program
-  .command('*')
-  .action(function(){
-    const options = Array.from(arguments).pop()
-    // console.log(chalk.red('a'))
-    console.log(chalk.keyword('orange')('Yay for orange colored text!'))
-    options.parent.help()
-  })
+// featureDeployerCommander
+//   .command('bla')
+//   .action(function (options) {
+//     console.log('a')
+//     options.promise = new Promise((resolve) => {
+//
+//     })
+//   })
 
 module.exports = function (consoleArguments) {
-  program.parse(consoleArguments)
+  console.log(consoleArguments);
+  const execution = featureDeployerCommander.parse(consoleArguments)
+  console.log(execution.args);
+  const [result] = execution.args
+  return result.promise
 }
 
   // commander
