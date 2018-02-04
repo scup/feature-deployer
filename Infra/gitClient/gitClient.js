@@ -11,8 +11,16 @@ module.exports = {
     gitClient.commands = gitClient.commands.concat(`git pull ${remote} ${branch}`)
   },
 
-  checkout (branch) {
-    gitClient.commands = gitClient.commands.concat(`git checkout ${branch}`)
+  push (remote, branchOrTag) {
+    gitClient.commands = gitClient.commands.concat(`git push ${remote} ${branchOrTag}`)
+  },
+
+  checkout (branchOrTag) {
+    gitClient.commands = gitClient.commands.concat(`git checkout ${branchOrTag}`)
+  },
+
+  tag (tagDescription) {
+    gitClient.commands = gitClient.commands.concat(`git tag ${tagDescription}`)
   },
 
   cleanExecution () {

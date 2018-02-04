@@ -13,9 +13,9 @@ Feature: To Test Feature
 
     Examples:
       | timestamp | command | gitTag |
-      | 1517400000000 | deploy rc | release_rc_2018_01_31_12_00 |
-      | 1517489122384 | deploy staging | release_staging_2018_02_01_12_45 |
-      | 1517400000000 | deploy rc deployDescription | release_rc_2018_01_31_12_00_deployDescription |
-      | 1517489122000 | deploy-rc | release_rc_2018_02_01_12_45 |
-      | 1517489122384 | deploy-rc deployDescription | release_rc_2018_02_01_12_45_deployDescription |
-      | 1517489122384 | deploy-prod deployDescription | release_prod_2018_02_01_12_45_deployDescription |
+      | 1517400000000 | deploy rc | release_rc_201801311200 |
+      | 1517489122384 | deploy staging | release_staging_201802011245 |
+      | 1517400000000 | deploy rc deployDescription | release_rc_201801311200_deployDescription |
+      | 1517489122000 | deploy-rc | release_rc_201802011245 |
+      | 1517489122384 | deploy-rc deployDescription | release_rc_201802011245_deployDescription |
+      | 1517489122384 | deploy-prod deployDescription | release_prod_201802011245_deployDescription |

@@ -14,7 +14,7 @@ featureDeployerCommander
 featureDeployerCommander
   .command('deploy-rc [deployDescription]')
   .description('generates a tag from master code, and publish it')
-  .action(deployCommand.bind(null, 'deploy-rc'))
+  .action(deployCommand.bind(null, 'rc'))
 
 featureDeployerCommander
   .command('deploy-prod [deployDescription]')
