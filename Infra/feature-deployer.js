@@ -2,6 +2,7 @@
 const featureDeployerCommander = require('commander')
 const deployCommand = require('./commands/deploy')
 const deployCommandHelp = require('./commands/deploy/deploy.help')
+const { deployFixedEnvironmentCommandHelp } = require('./commands/deploy/deploy.help')
 const deployCommandData = require('./commands/deploy/package.json')
 const packageData = require('../package.json')
 
@@ -14,17 +15,16 @@ featureDeployerCommander
   .action(deployCommand)
   .on('--help', deployCommandHelp)
 
-featureDeployerCommander
-  .command('deploy-rc [deployDescription]')
-  .alias('drc')
-  .description(deployCommandData.deployDescription)
-  .action(deployCommand.bind(null, 'rc'))
+const fixedEnvironments = ['rc', 'prod']
 
-featureDeployerCommander
-  .command('deploy-prod [deployDescription]')
-  .alias('dprod')
-  .description(deployCommandData.deployDescription)
-  .action(deployCommand.bind(null, 'prod'))
+fixedEnvironments.forEach(function generateFixedEnvironmentsCommands (fixedEnvironment) {
+  featureDeployerCommander
+    .command(`deploy-${fixedEnvironment} [deployDescription]`)
+    .alias(`d${fixedEnvironment}`)
+    .description(deployCommandData.deployDescription)
+    .action(deployCommand.bind(null, fixedEnvironment))
+    .on('--help', deployFixedEnvironmentCommandHelp.bind(null, fixedEnvironment))
+})
 
 // function a (c, t) {
 //   console.log(c)
