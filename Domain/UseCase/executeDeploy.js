@@ -1,6 +1,6 @@
 module.exports = async function executeDeploy ({ environment, deployDescription }) {
-  require('Infra/gitClient').checkout('master')
-  require('Infra/gitClient').pull('origin', 'master')
+  require('../../Infra/gitClient').checkout('master')
+  require('../../Infra/gitClient').pull('origin', 'master')
 //     console.log('foobar:', options.parent.foobar)
 //     console.log('verbose:', options.parent.verbose)
 //     var mode = options.setup_mode || "normal"

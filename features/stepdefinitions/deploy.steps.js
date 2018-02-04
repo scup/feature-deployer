@@ -3,7 +3,7 @@ const { useFakeTimers } = require('sinon')
 const { expect } = require('chai')
 
 const featureDeployer = require('../../Infra/feature-deployer')
-const { getExecution } = require('Infra/gitClient')
+const { getExecution } = require('../../Infra/gitClient')
 
 Given('Now is {int}', function (timestamp) {
   this.clock = useFakeTimers(timestamp)

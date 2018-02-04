@@ -1,7 +1,7 @@
 // const chalk = require('chalk')
 const featureDeployerCommander = require('commander')
-const deployCommand = require('./Infra/commands/deploy')
-const packageData = require('./package.json')
+const deployCommand = require('./commands/deploy')
+const packageData = require('../package.json')
 
 featureDeployerCommander.version(packageData.version)
 
