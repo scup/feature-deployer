@@ -2,7 +2,7 @@ const { Given, When, Then } = require('cucumber')
 const { useFakeTimers } = require('sinon')
 const { expect } = require('chai')
 
-const featureDeployer = require('feature-deployer')
+const featureDeployer = require('../../Infra/feature-deployer')
 const { getExecution } = require('Infra/gitClient')
 
 Given('Now is {int}', function (timestamp) {
