@@ -1,5 +1,5 @@
 const dependencies = {
-  executeDeploy: require('../../Domain/UseCase/executeDeploy')
+  executeDeploy: require('../../../Domain/UseCase/executeDeploy')
 }
 
 module.exports = function deployCommand (environment, deployDescription, commanderOptions, injection) {
