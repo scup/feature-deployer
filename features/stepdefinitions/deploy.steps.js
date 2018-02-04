@@ -9,13 +9,10 @@ Given('Now is {int}', function (timestamp) {
   this.clock = useFakeTimers(timestamp)
 })
 
-async function executeCommandStep (command) {
+When(/^I execute the command (d(?:eploy)?[\s-]?[^\s]+(?: [^\s]+)?) to deploy$/, async function (command) {
   await featureDeployer(['node', 'feature-deployer'].concat(command.split(' ')))
   this.commandsExecuted = getExecution()
-}
-
-When(/^I execute the command (deploy[\s-][^\s]+) to deploy$/, executeCommandStep)
-When(/^I execute the command (deploy[\s-][^\s]+ [^\s]+) to deploy$/, executeCommandStep) // with deploy description argument
+})
 
 Then('It switches to main branch', function () {
   expect(this.commandsExecuted.next().value).to.equal('git checkout master')
