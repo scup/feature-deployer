@@ -15,15 +15,15 @@ featureDeployerCommander
   .action(deployCommand)
   .on('--help', deployCommandHelp)
 
-const fixedEnvironments = ['rc', 'prod']
+const fixedDeployEnvironments = ['rc', 'prod']
 
-fixedEnvironments.forEach(function generateFixedEnvironmentsCommands (fixedEnvironment) {
+fixedDeployEnvironments.forEach(function generateFixedEnvironmentsCommands (environment) {
   featureDeployerCommander
-    .command(`deploy-${fixedEnvironment} [deployDescription]`)
-    .alias(`d${fixedEnvironment}`)
+    .command(`deploy-${environment} [deployDescription]`)
+    .alias(`d${environment}`)
     .description(deployCommandData.deployDescription)
-    .action(deployCommand.bind(null, fixedEnvironment))
-    .on('--help', deployFixedEnvironmentCommandHelp.bind(null, fixedEnvironment))
+    .action(deployCommand.bind(null, environment))
+    .on('--help', deployFixedEnvironmentCommandHelp.bind(null, environment))
 })
 
 // function a (c, t) {
