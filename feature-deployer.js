@@ -1,10 +1,27 @@
-const chalk = require('chalk')
+// const chalk = require('chalk')
 const featureDeployerCommander = require('commander')
+const deployCommand = require('./Infra/commands/deploy')
 const packageData = require('./package.json')
 
 featureDeployerCommander.version(packageData.version)
 
-// program.foobar = '2'
+featureDeployerCommander
+  .command('deploy <environment> [deployDescription]')
+  .description('generates a tag from master code, and publish it')
+//   .option("-s, --setup_mode [mode]", "Which setup mode to use")
+  .action(deployCommand)
+
+featureDeployerCommander
+  .command('deploy-rc [deployDescription]')
+  .description('generates a tag from master code, and publish it')
+  .action(deployCommand.bind(null, 'deploy-rc'))
+
+featureDeployerCommander
+  .command('deploy-prod [deployDescription]')
+  .description('generates a tag from master code, and publish it')
+  .action(deployCommand.bind(null, 'prod'))
+
+// featureDeployerCommander.foobar = '2'
 
 // function a (c, t) {
 //   console.log(c)
@@ -14,25 +31,21 @@ featureDeployerCommander.version(packageData.version)
 // feature-deployer to-test BRANCH [env]
 // feature-deployer test BRANCH [env]
 
-// program
+// featureDeployerCommander
+//   .command('deploy <environment> [deployDescription]')
+//   .description('generates a tag from master code, and publish it')
+//   .option("-s, --setup_mode [mode]", "Which setup mode to use")
+//   .action(deployCommand)
+
+// featureDeployerCommander
 //   .option('-C, --chdir <path>', 'change the working directory')
 //   .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
 //   .option('-T, --no-tests', 'ignore test hook', )
-//   .option('-v, --verbose [a]', 'A value that can be increased', a.bind(program), [])
+//   .option('-v, --verbose [a]', 'A value that can be increased', a.bind(featureDeployerCommander), [])
 //
-// program
-//   .command('setup [b] [env] [bla]')
-//   .description('run setup commands for all envs')
-//   .option("-s, --setup_mode [mode]", "Which setup mode to use")
-//   .action(function(branch, env, bla, options){
-//     console.log('foobar:', options.parent.foobar)
-//     console.log('verbose:', options.parent.verbose)
-//     var mode = options.setup_mode || "normal"
-//     env = env || 'all'
-//     console.log('setup for %s env(s) with %s mode in branch %s', env, mode, branch)
-//   })
+
 //
-// program
+// featureDeployerCommander
 //   .command('exec <cmd>')
 //   .alias('ex')
 //   .description('execute the given remote cmd')
@@ -48,7 +61,7 @@ featureDeployerCommander.version(packageData.version)
 //     console.log()
 //   })
 //
-// program
+// featureDeployerCommander
 //   .command('*')
 //   .action(function(){
 //     const options = Array.from(arguments).pop()
@@ -67,12 +80,9 @@ featureDeployerCommander.version(packageData.version)
 //   })
 
 module.exports = function (consoleArguments) {
-  require('./gitClient').pull('master')
-  console.log(consoleArguments);
   const execution = featureDeployerCommander.parse(consoleArguments)
-  console.log(execution.args);
-  const [result] = execution.args
-  return result.promise
+
+  return execution.promise
 }
 
   // commander

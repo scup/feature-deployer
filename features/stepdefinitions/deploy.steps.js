@@ -3,7 +3,7 @@ const { useFakeTimers } = require('sinon')
 const { expect } = require('chai')
 
 const featureDeployer = require('feature-deployer')
-const { getExecution } = require('gitClient')
+const { getExecution } = require('Infra/gitClient')
 
 Given('Now is {int}', function (timestamp) {
   this.clock = useFakeTimers(timestamp)
@@ -17,12 +17,12 @@ async function executeCommandStep (command) {
 When(/^I execute the command (deploy[\s-][^\s]+) to deploy$/, executeCommandStep)
 When(/^I execute the command (deploy[\s-][^\s]+ [^\s]+) to deploy$/, executeCommandStep) // with description argument
 
-Then('It downloads the last version of the code', function () {
-  expect(this.commandsExecuted.next().value).to.equal('git pull origin master')
+Then('It switches to main branch', function () {
+  expect(this.commandsExecuted.next().value).to.equal('git checkout master')
 })
 
-Then('It switches to branch', function (callback) {
-  callback(null, 'pending')
+Then('It downloads the last version of the code', function () {
+  expect(this.commandsExecuted.next().value).to.equal('git pull origin master')
 })
 
 Then(/^Create the tag (.+)$/, function (gitTag, callback) {
