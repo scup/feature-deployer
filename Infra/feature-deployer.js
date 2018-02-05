@@ -46,8 +46,14 @@ fixedDeployEnvironments.forEach(function generateFixedEnvironmentsCommands (envi
 //     options.parent.help()
 //   })
 
-module.exports = function (consoleArguments) {
-  return featureDeployerCommander.parse(consoleArguments).promise
+module.exports = async function (consoleArguments) {
+  const commands = []
+  featureDeployerCommander.addCommandOnLog = function addCommandOnLog (command) {
+    commands.push(command)
+  }
+  await featureDeployerCommander.parse(consoleArguments).promise
+
+  return commands
 }
 
 // const options = {

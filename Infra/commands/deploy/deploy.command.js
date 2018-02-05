@@ -1,12 +1,17 @@
+const path = require('path')
+
 const executeDeploy = require('../../../Domain/UseCase/executeDeploy')
 const executeDeployOnProject = require('../../../Domain/UseCase/executeDeployOnProject')
 
 module.exports = function deployCommand (environment, deployDescription, commanderOptions) {
-  const projectPaths = commanderOptions.parent.project
+  const { addCommandOnLog, project: projectPaths } = commanderOptions.parent
 
   const deployUseCase = projectPaths && projectPaths.length ? executeDeployOnProject : executeDeploy
 
-  const projectPath = require('path').basename(process.cwd())
+  const currentProjectPath = path.basename(process.cwd())
 
-  commanderOptions.parent.promise = deployUseCase({ environment, deployDescription, projectPaths, projectPath })
+  const injection = { addCommandOnLog }
+  const deployOptions = { currentProjectPath, environment, deployDescription, projectPaths }
+
+  commanderOptions.parent.promise = deployUseCase(deployOptions, injection)
 }

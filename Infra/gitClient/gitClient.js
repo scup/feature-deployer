@@ -1,36 +1,28 @@
 const path = require('path')
 
 const gitClient = {
-  commands: [],
-  baseDirectory: process.cwd(),
-  addCommand (command) {
-    gitClient.commands.push(command)
-  }
+  baseDirectory: process.cwd()
 }
 
 module.exports = {
-  changeDirectory (directory) {
+  changeDirectory (directory, addCommandOnLog) {
     const directoryResolved = path.resolve(gitClient.baseDirectory, directory)
-    gitClient.addCommand(`cd ${directoryResolved}`)
+    addCommandOnLog(`cd ${directoryResolved}`)
   },
 
-  getExecution () {
-    return gitClient.commands[Symbol.iterator]()
+  pull (remote, branch, addCommandOnLog) {
+    addCommandOnLog(`git pull ${remote} ${branch}`)
   },
 
-  pull (remote, branch) {
-    gitClient.addCommand(`git pull ${remote} ${branch}`)
+  push (remote, branchOrTag, addCommandOnLog) {
+    addCommandOnLog(`git push ${remote} ${branchOrTag}`)
   },
 
-  push (remote, branchOrTag) {
-    gitClient.addCommand(`git push ${remote} ${branchOrTag}`)
+  checkout (branchOrTag, addCommandOnLog) {
+    addCommandOnLog(`git checkout ${branchOrTag}`)
   },
 
-  checkout (branchOrTag) {
-    gitClient.addCommand(`git checkout ${branchOrTag}`)
-  },
-
-  tag (tagDescription) {
-    gitClient.addCommand(`git tag ${tagDescription}`)
+  tag (tagDescription, addCommandOnLog) {
+    addCommandOnLog(`git tag ${tagDescription}`)
   }
 }

@@ -1,12 +1,12 @@
 const executeDeploy = require('./executeDeploy')
+const gitClient = require('../../Infra/gitClient')
 
-async function deployOnProject (projectPath) {
-  const { environment, deployDescription } = this
-  require('../../Infra/gitClient').changeDirectory(projectPath)
-  return executeDeploy({ environment, deployDescription, projectPath })
-}
+module.exports = async function executeDeployOnProject (deployOptions, injection) {
+  const { environment, deployDescription, projectPaths } = deployOptions
+  const { addCommandOnLog } = injection
 
-module.exports = async function executeDeploy ({ environment, deployDescription, projectPaths }) {
-  await Promise.all(projectPaths.map(deployOnProject, { environment, deployDescription }))
-  return Array.from(require('../../Infra/gitClient').getExecution())
+  for (const projectPath of projectPaths) {
+    gitClient.changeDirectory(projectPath, addCommandOnLog)
+    await executeDeploy({ environment, deployDescription, projectPath }, injection)
+  }
 }

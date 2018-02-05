@@ -1,3 +1,5 @@
+const gitClient = require('../../Infra/gitClient')
+
 const getNowDateFormatted = require('../getNowDateFormatted')
 const logger = require('../../Infra/logger')
 
@@ -9,17 +11,17 @@ function getTagParts ({ environment, deployDescription }) {
   return tag.concat(deployDescription)
 }
 
-module.exports = async function executeDeploy ({ environment, deployDescription, projectPath }) {
-  logger.colored('info', 'white', `\nInitializing deploy on ${projectPath}\n`)
-  const gitClient = require('../../Infra/gitClient')
+module.exports = async function executeDeploy (deployOptions, injection) {
+  const { environment, deployDescription, currentProjectPath } = deployOptions
+  const { addCommandOnLog } = injection
 
-  gitClient.checkout('master')
-  gitClient.pull('origin', 'master')
+  logger.colored('info', 'white', `\nInitializing deploy on ${currentProjectPath}\n`)
+
+  await gitClient.checkout('master', addCommandOnLog)
+  await gitClient.pull('origin', 'master', addCommandOnLog)
 
   const tag = getTagParts({ environment, deployDescription }).join('_')
 
-  gitClient.tag(tag)
-  gitClient.push('origin', tag)
-
-  return Array.from(gitClient.getExecution())
+  await gitClient.tag(tag, addCommandOnLog)
+  await gitClient.push('origin', tag, addCommandOnLog)
 }
