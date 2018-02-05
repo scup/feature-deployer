@@ -1,28 +1,44 @@
+const gitPromisified = require('simple-git/promise')
 const path = require('path')
 
+const baseDirectory = process.cwd()
 const gitClient = {
-  baseDirectory: process.cwd()
+  baseDirectory,
+  git: gitPromisified(baseDirectory)
+}
+
+const dependencies = {
+  executeGitClients: process.env.NODE_ENV !== 'tests',
+  addCommandOnLog () {}
 }
 
 module.exports = {
-  changeDirectory (directory, addCommandOnLog) {
-    const directoryResolved = path.resolve(gitClient.baseDirectory, directory)
+  changeDirectory (gitDirectory, injection) {
+    const { addCommandOnLog, executeGitClients } = Object.assign({}, dependencies, injection)
+    const directoryResolved = path.resolve(gitClient.baseDirectory, gitDirectory)
     addCommandOnLog(`cd ${directoryResolved}`)
+    executeGitClients && (gitClient.git = gitPromisified(directoryResolved))
   },
 
-  pull (remote, branch, addCommandOnLog) {
+  async pull (remote, branch, injection) {
+    const { addCommandOnLog, executeGitClients } = Object.assign({}, dependencies, injection)
     addCommandOnLog(`git pull ${remote} ${branch}`)
+    // await (executeGitClients && gitClient.git.raw(['pull', 'origin', branch]))
   },
 
-  push (remote, branchOrTag, addCommandOnLog) {
+  async push (remote, branchOrTag, injection) {
+    const { addCommandOnLog, executeGitClients } = Object.assign({}, dependencies, injection)
     addCommandOnLog(`git push ${remote} ${branchOrTag}`)
   },
 
-  checkout (branchOrTag, addCommandOnLog) {
-    addCommandOnLog(`git checkout ${branchOrTag}`)
+  async checkout (branchOrTag, injection) {
+    const { addCommandOnLog, executeGitClients } = Object.assign({}, dependencies, injection)
+    addCommandOnLog(`git checkout ${branchOrTag} -f`)
+    // await (executeGitClients && await gitClient.git.raw(['checkout', branchOrTag, '-f']))
   },
 
-  tag (tagDescription, addCommandOnLog) {
+  async tag (tagDescription, injection) {
+    const { addCommandOnLog, executeGitCommands } = Object.assign({}, dependencies, injection)
     addCommandOnLog(`git tag ${tagDescription}`)
   }
 }
