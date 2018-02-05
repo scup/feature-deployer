@@ -11,7 +11,8 @@ function logCommand (command) {
 async function execute () {
   try {
     const commands = await featureDeployer(process.argv)
-    if (!commands) return
+
+    if (!commands || !commands.length) return
 
     logger.info(chalk.white('\nExecuted Plan:\n'))
 
