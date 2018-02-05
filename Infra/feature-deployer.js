@@ -1,12 +1,20 @@
 // const chalk = require('chalk')
-const featureDeployerCommander = require('commander')
 const deployCommand = require('./commands/deploy')
 const deployCommandHelp = require('./commands/deploy/deploy.help')
 const { deployFixedEnvironmentCommandHelp } = require('./commands/deploy/deploy.help')
 const deployCommandData = require('./commands/deploy/package.json')
 const packageData = require('../package.json')
 
+const featureDeployerCommander = require('commander')
+
 featureDeployerCommander.version(packageData.version)
+
+function collectValues (value, total) {
+  return total.concat(value)
+}
+
+featureDeployerCommander
+  .option('-p, --project <projectName>', 'The projects you want to deploy', collectValues, [])
 
 featureDeployerCommander
   .command('deploy <environment> [deployDescription]')
@@ -25,11 +33,6 @@ fixedDeployEnvironments.forEach(function generateFixedEnvironmentsCommands (envi
     .action(deployCommand.bind(null, environment))
     .on('--help', deployFixedEnvironmentCommandHelp.bind(null, environment))
 })
-
-// function a (c, t) {
-//   console.log(c)
-//   return t.concat(c)
-// }
 
 // featureDeployerCommander
 //   .option('-v, --verbose [a]', 'A value that can be increased', a.bind(featureDeployerCommander), [])

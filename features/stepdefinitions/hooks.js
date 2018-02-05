@@ -2,5 +2,8 @@ const { After } = require('cucumber')
 
 After(function cleanFakeClock () {
   this.clock && this.clock.restore()
-  require('../../Infra/gitClient').cleanExecution()
+
+  delete require.cache[require.resolve('../../Infra/gitClient/gitClient')]
+  delete require.cache[require.resolve('../../Infra/feature-deployer')]
+  delete require.cache[require.resolve('commander')]
 })

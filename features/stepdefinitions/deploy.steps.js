@@ -1,18 +1,5 @@
-const { Given, When, Then } = require('cucumber')
-const { useFakeTimers } = require('sinon')
+const { Then } = require('cucumber')
 const { expect } = require('chai')
-
-const featureDeployer = require('../../Infra/feature-deployer')
-const { getExecution } = require('../../Infra/gitClient')
-
-Given('Now is {int}', function (timestamp) {
-  this.clock = useFakeTimers(timestamp)
-})
-
-When(/^I execute the command (d(?:eploy)?[\s-]?[^\s]+(?: [^\s]+)?) to deploy$/, async function (command) {
-  await featureDeployer(['node', 'feature-deployer'].concat(command.split(' ')))
-  this.commandsExecuted = getExecution()
-})
 
 Then('It switches to main branch', function () {
   expect(this.commandsExecuted.next().value).to.equal('git checkout master')
