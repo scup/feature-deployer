@@ -1,20 +1,25 @@
 #!/usr/bin/env node
+const chalk = require('chalk')
 const logger = require('./Infra/logger')
 
 const featureDeployer = require('./Infra/feature-deployer')
+
+function logCommand (command) {
+  logger.info(chalk.green(command))
+}
 
 async function execute () {
   try {
     const commands = await featureDeployer(process.argv)
     if (!commands) return
 
-    logger.colored('info', 'white', '\nExecuted Plan:\n')
+    logger.info(chalk.white('\nExecuted Plan:\n'))
 
-    commands.forEach(logger.colored.bind(null, 'info', 'green'))
+    commands.forEach(logCommand)
 
-    logger.info('\n')
+    logger.info(chalk.blue('\nNow, wait the deploy on CI!!!'))
   } catch (error) {
-    logger.colored('error', 'red', error.stack)
+    logger.error(chalk.red(error.stack))
   }
 }
 
