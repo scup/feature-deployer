@@ -1,4 +1,3 @@
-// const chalk = require('chalk')
 const deployCommand = require('./commands/deploy')
 const deployCommandHelp = require('./commands/deploy/deploy.help')
 const { deployFixedEnvironmentCommandHelp } = require('./commands/deploy/deploy.help')
@@ -48,9 +47,7 @@ fixedDeployEnvironments.forEach(function generateFixedEnvironmentsCommands (envi
 //   })
 
 module.exports = function (consoleArguments) {
-  const execution = featureDeployerCommander.parse(consoleArguments)
-
-  return execution.promise
+  return featureDeployerCommander.parse(consoleArguments).promise
 }
 
 // const options = {
