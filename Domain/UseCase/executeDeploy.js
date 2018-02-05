@@ -14,19 +14,18 @@ function getTagParts ({ environment, deployDescription }) {
 
 module.exports = async function executeDeploy (deployOptions, injection) {
   const { environment, deployDescription, currentProjectPath } = deployOptions
-  const { addCommandOnLog } = injection
 
   logger.info(chalk.white(`\nInitializing deploy on ${chalk.bold.yellow(currentProjectPath)}`))
 
-  await gitClient.checkout('master', addCommandOnLog)
+  await gitClient.checkout('master', injection)
   logger.info(chalk.white('  · Download last code ⏬'))
-  await gitClient.pull('origin', 'master', addCommandOnLog)
+  await gitClient.pull('origin', 'master', injection)
 
   const tag = getTagParts({ environment, deployDescription }).join('_')
 
-  await gitClient.tag(tag, addCommandOnLog)
+  await gitClient.tag(tag, injection)
   logger.info(chalk.white('  · Uploading release ✅'))
-  await gitClient.push('origin', tag, addCommandOnLog)
+  await gitClient.push('origin', tag, injection)
 
   logger.info(chalk.white(`  · Done 👍🏾`))
 }

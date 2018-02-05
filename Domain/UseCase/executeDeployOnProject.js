@@ -3,10 +3,9 @@ const gitClient = require('../../Infra/gitClient')
 
 module.exports = async function executeDeployOnProject (deployOptions, injection) {
   const { environment, deployDescription, projectPaths } = deployOptions
-  const { addCommandOnLog } = injection
 
   for (const currentProjectPath of projectPaths) {
-    gitClient.changeDirectory(currentProjectPath, addCommandOnLog)
+    gitClient.changeDirectory(currentProjectPath, injection)
     await executeDeploy({ environment, deployDescription, currentProjectPath }, injection)
   }
 }
