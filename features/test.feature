@@ -9,6 +9,7 @@ Feature: Test Feature
     Then It downloads the last version of main branch
       And It switches to last version of branch
       And It merges with main branch
+      And It cleans previous release tags
       And It creates the tag <gitTestTag>
       And It uploads the created tag to server
       And It switches to main branch
@@ -20,13 +21,14 @@ Feature: Test Feature
       | 1517489122384 | t SCARE-1010 qa | test_qa_201802011245_SCARE-1010 |
       | 1517400000000 | teste SCARE-1012 qa-alfa | test_qa-alfa_201801311200_SCARE-1012 |
 
-  Scenario Outline: Send a branch to test on root folder
+  Scenario Outline: Send a branch to test on multiple projects
     Given Now is <timestamp>
     When I execute the command feature-deployer <command>
     Then It uses directory of <project>
       And It downloads the last version of main branch
       And It switches to last version of branch
       And It merges with main branch
+      And It cleans previous release tags
       And It creates the tag <gitTestTag>
       And It uploads the created tag to server
       And It switches to main branch
