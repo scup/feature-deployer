@@ -7,10 +7,9 @@ Feature: Deploy Feature on Projects
     Given Now is <timestamp>
     When I execute the command feature-deployer <command>
     Then It uses directory of <project>
-      And It switches to main branch
-      And It downloads the last version of the code
-      And Create the tag <gitTag>
-      And Upload the created tag to server
+      And It switches to last version of main branch
+      And It creates the tag <gitTag>
+      And It uploads the created tag to server
 
     Examples:
       | timestamp | command | gitTag | project |
@@ -21,10 +20,9 @@ Feature: Deploy Feature on Projects
     Given Now is <timestamp>
     When I execute the command feature-deployer <command>
     Then It uses directory of <project>
-      And It switches to main branch
-      And It downloads the last version of the code
-      And Create the tag <gitTag>
-      And Upload the created tag to server
+      And It switches to last version of main branch
+      And It creates the tag <gitTag>
+      And It uploads the created tag to server
       And Repeat the steps above on <projectTwo> with tag <gitTag>
 
     Examples:

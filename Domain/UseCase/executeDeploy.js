@@ -26,8 +26,8 @@ async function switchToTag (environment, deployDescription, injection) {
 }
 
 async function switchToMainBranch ({ environment, deployDescription, now }, injection) {
+  await gitClient.fetch(DEFAULT_ORIGIN, MAIN_BRANCH, injection)
   await gitClient.checkout(MAIN_BRANCH, injection)
-  await gitClient.pull(DEFAULT_ORIGIN, MAIN_BRANCH, injection)
 
   return getTagParts({ environment, deployDescription, now })
 }
@@ -52,5 +52,5 @@ module.exports = async function executeDeploy (deployOptions, injection) {
   logger.info(chalk.white('  · Uploading release ✅'))
   await gitClient.push(DEFAULT_ORIGIN, tag, injection)
 
-  logger.info(chalk.white(`  · Done 👍🏾`))
+  logger.info(chalk.white(`  · Done 👍🏾 , the release ${chalk.bold.yellow(tag)} is published!`))
 }

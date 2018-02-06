@@ -1,4 +1,3 @@
-
 describe('gitClient', function () {
   const { expect } = require('chai')
   const { lorem, system } = require('faker')
@@ -32,11 +31,11 @@ describe('gitClient', function () {
       gitClient.changeDirectory(gitDirectory, dependencies)
     })
 
-    it('pulls on git', async function () {
+    it('fetchs an branch on git', async function () {
       const { remote, branchOrTag, git: { raw } } = this
-      await gitClient.pull(remote, branchOrTag)
+      await gitClient.fetch(remote, branchOrTag)
       assert.calledOnce(raw)
-      assert.calledWithExactly(raw, ['pull', remote, branchOrTag])
+      assert.calledWithExactly(raw, ['fetch', remote, `${branchOrTag}:${branchOrTag}`])
     })
 
     it('pushes on git', async function () {

@@ -1,7 +1,7 @@
 const executeDeploy = require('./executeDeploy')
 const gitClient = require('../../Infra/gitClient')
 
-module.exports = async function executeDeployOnProject (deployOptions, injection) {
+module.exports = async function executeDeployOnProjects (deployOptions, injection) {
   const { environment, deployDescription, projectPaths, now } = deployOptions
 
   for (const currentProjectPath of projectPaths) {

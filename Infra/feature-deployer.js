@@ -1,7 +1,11 @@
 const deployCommand = require('./commands/deploy')
+const deployCommandData = require('./commands/deploy/package.json')
 const deployCommandHelp = require('./commands/deploy/deploy.help')
 const { deployFixedEnvironmentCommandHelp } = require('./commands/deploy/deploy.help')
-const deployCommandData = require('./commands/deploy/package.json')
+
+const testCommand = require('./commands/test')
+const testCommandData = require('./commands/test/package.json')
+
 const packageData = require('../package.json')
 
 const featureDeployerCommander = require('commander')
@@ -21,6 +25,12 @@ featureDeployerCommander
   .description(deployCommandData.deployDescription)
   .action(deployCommand)
   .on('--help', deployCommandHelp)
+
+featureDeployerCommander
+  .command('test <branch> <environment>')
+  .alias('t')
+  .description(testCommandData.deployDescription)
+  .action(testCommand)
 
 const fixedDeployEnvironments = {
   rc: {

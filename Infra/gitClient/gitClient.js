@@ -34,10 +34,11 @@ module.exports = {
     }
   },
 
-  async pull (remote, branch, injection) {
+  async fetch (remote, branch, injection) {
     const { addCommandOnLog } = Object.assign({}, dependencies, injection)
-    addCommandOnLog(`git pull ${remote} ${branch}`)
-    await gitClient.executeGitCommand(['pull', remote, branch])
+    const fetchBranch = `${branch}:${branch}`
+    addCommandOnLog(`git fetch ${remote} ${fetchBranch}`)
+    await gitClient.executeGitCommand(['fetch', remote, fetchBranch])
   },
 
   async push (remote, branchOrTag, injection) {

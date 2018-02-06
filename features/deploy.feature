@@ -1,15 +1,14 @@
 Feature: Deploy Feature
   As a deployer
-  I want to deploy the current code to an environment
+  I want to deploy the current code to an environmenton a project folder (i.e: scup-care-front, scup-care)
   So that the feature is avaiable to use
 
-  Scenario Outline: I am on a project folder (i.e: scup-care-front, scup-care), want to deploy to an environment
+  Scenario Outline: Deploy to an environment
     Given Now is <timestamp>
     When I execute the command feature-deployer <command>
-    Then It switches to main branch
-      And It downloads the last version of the code
-      And Create the tag <gitTag>
-      And Upload the created tag to server
+      And It switches to last version of main branch
+      And It creates the tag <gitTag>
+      And It uploads the created tag to server
 
     Examples:
       | timestamp | command | gitTag |
@@ -20,12 +19,12 @@ Feature: Deploy Feature
       | 1517489122384 | deploy-rc deployDescription | release_rc_201802011245_deployDescription |
       | 1517489122384 | drc deployDescription | release_rc_201802011245_deployDescription |
 
-  Scenario Outline: I am on a project folder (i.e: scup-care-front, scup-care), want to deploy to production
+  Scenario Outline: Deploy to production
     Given Now is <timestamp>
     When I execute the command feature-deployer <command>
     Then It switches to the tag release
-      And Create the tag <gitTag>
-      And Upload the created tag to server
+      And It creates the tag <gitTag>
+      And It uploads the created tag to server
 
     Examples:
       | timestamp | command | gitTag |
