@@ -30,7 +30,7 @@ Feature: Deploy Feature
     Examples:
       | timestamp | command | gitTag |
       | 1517400000000 | deploy production release_rc_201801311200 | release_production_201801311200 |
-      | 1517400000000 | d production release_rc_201801311200_deployDescription | release_prod_201801311200_deployDescription |
+      | 1517400000000 | d production release_rc_201801311200_deployDescription | release_production_201801311200_deployDescription |
       | 1517489122000 | dprod release_rc_201802011245 | release_production_201802011245 |
       | 1517489122384 | deploy-production release_rc_201802011245_deployDescription | release_production_201802011245_deployDescription |
       | 1517489122384 | dprod release_rc_201802011245_deployDescription | release_production_201802011245_deployDescription |

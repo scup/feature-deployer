@@ -20,6 +20,6 @@ Then('Upload the created tag to server', function () {
 
 Then('It switches to the tag release', function () {
   const lastRcGitTag = this.deployCommand.pop()
-  expect(this.commandsExecuted.next().value).to.equal(`git fetch --tags`)
+  expect(this.commandsExecuted.next().value).to.equal(`git fetch origin --tags`)
   expect(this.commandsExecuted.next().value).to.equal(`git checkout ${lastRcGitTag}`)
 })
