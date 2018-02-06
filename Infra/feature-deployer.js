@@ -1,3 +1,5 @@
+const path = require('path')
+
 const deployCommand = require('./commands/deploy')
 const deployCommandData = require('./commands/deploy/package.json')
 const deployCommandHelp = require('./commands/deploy/deploy.help')
@@ -70,6 +72,8 @@ module.exports = async function (consoleArguments) {
   featureDeployerCommander.addCommandOnLog = function addCommandOnLog (command) {
     commands.push(command)
   }
+  featureDeployerCommander.now = new Date()
+  featureDeployerCommander.currentProjectPath = path.basename(process.cwd())
   await featureDeployerCommander.parse(consoleArguments).promise
 
   return commands

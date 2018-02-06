@@ -37,6 +37,17 @@
     "standard": "^10.0.3",
     "watch-cli": "^0.2.3"
   },
+  "standard": {
+    "globals": [
+      "describe",
+      "context",
+      "it",
+      "after",
+      "afterEach",
+      "before",
+      "beforeEach"
+    ]
+  },
   "nyc": {
     "check-coverage": true,
     "per-file": true,

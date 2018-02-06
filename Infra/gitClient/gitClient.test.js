@@ -1,11 +1,10 @@
 describe('gitClient', function () {
-  const { expect } = require('chai')
-  const { lorem, system } = require('faker')
+  const { lorem } = require('faker')
   const { mock, assert } = require('sinon')
   const gitClient = require('./gitClient')
 
   context('workingon a git in a directory', function () {
-    beforeEach(function() {
+    beforeEach(function () {
       const gitDirectory = lorem.word()
       const gitFullDirectoryPath = lorem.word()
       const baseDirectory = process.cwd()

@@ -66,8 +66,8 @@ module.exports = {
   }
 }
 
-function executeGitCommand(parameters) {
-  return gitClient.git.raw(parameters)
+function executeGitCommand (parameters) {
+  // return gitClient.git.raw(parameters)
 }
 
 function noop () {}
