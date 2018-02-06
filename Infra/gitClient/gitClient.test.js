@@ -59,5 +59,12 @@ describe('gitClient', function () {
       assert.calledOnce(raw)
       assert.calledWithExactly(raw, ['tag', tagDescription])
     })
+
+    it('fetch the tags on git', async function () {
+      const { remote, git: { raw } } = this
+      await gitClient.fetchTags(remote)
+      assert.calledOnce(raw)
+      assert.calledWithExactly(raw, ['fetch', remote, '--tags'])
+    })
   })
 })

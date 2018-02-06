@@ -2,19 +2,21 @@ const chalk = require('chalk')
 const getNowDateFormatted = require('../../../Domain/getNowDateFormatted')
 
 function deployFixedEnvironmentCommandHelp (fixedEnvironment) {
+  const now = new Date()
   console.log('')
   console.log('  Examples:')
   console.log()
   console.log(`    $ feature-deployer deploy-${fixedEnvironment}`)
-  console.log(chalk.green(`      -- It would generate a release called release_${fixedEnvironment}_${getNowDateFormatted()}`))
+  console.log(chalk.green(`      -- It would generate a release called release_${fixedEnvironment}_${getNowDateFormatted(now)}`))
   console.log(`    $ feature-deployer deploy-${fixedEnvironment} onboarding`)
-  console.log(chalk.green(`      -- It would generate a release called release_${fixedEnvironment}_${getNowDateFormatted()}_onboarding`))
+  console.log(chalk.green(`      -- It would generate a release called release_${fixedEnvironment}_${getNowDateFormatted(now)}_onboarding`))
   console.log()
 }
 
 function deployHelp () {
   console.log('')
   console.log('  Examples:')
+  console.log('   if the deploy is to production specify the whole tag')
   console.log()
   console.log('    $ feature-deployer deploy rc onboarding')
   console.log(chalk.green(`      -- It would generate a release called release_rc_${getNowDateFormatted()}_onboarding`))

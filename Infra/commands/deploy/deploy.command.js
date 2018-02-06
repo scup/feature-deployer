@@ -11,7 +11,7 @@ module.exports = function deployCommand (environment, deployDescription, command
   const currentProjectPath = path.basename(process.cwd())
 
   const injection = { addCommandOnLog }
-  const deployOptions = { currentProjectPath, environment, deployDescription, projectPaths }
+  const deployOptions = { currentProjectPath, environment, deployDescription, projectPaths, now: new Date() }
 
   commanderOptions.parent.promise = deployUseCase(deployOptions, injection)
 }

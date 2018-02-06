@@ -16,21 +16,30 @@ featureDeployerCommander
   .option('-p, --project <projectName>', 'The projects you want to deploy', collectValues, [])
 
 featureDeployerCommander
-  .command('deploy <environment> [deployDescription]')
+  .command('deploy <environment> [deployDescription|release]')
   .alias('d')
   .description(deployCommandData.deployDescription)
   .action(deployCommand)
   .on('--help', deployCommandHelp)
 
-const fixedDeployEnvironments = ['rc', 'prod']
+const fixedDeployEnvironments = {
+  rc: {
+    branch: 'rc',
+    parameter: 'deployDescription'
+  },
+  prod: {
+    branch: 'production',
+    parameter: 'release'
+  }
+}
 
-fixedDeployEnvironments.forEach(function generateFixedEnvironmentsCommands (environment) {
+Object.entries(fixedDeployEnvironments).forEach(function generateFixedEnvironmentsCommands ([alias, environment]) {
   featureDeployerCommander
-    .command(`deploy-${environment} [deployDescription]`)
-    .alias(`d${environment}`)
+    .command(`deploy-${environment.branch} [${environment.parameter}]`)
+    .alias(`d${alias}`)
     .description(deployCommandData.deployDescription)
-    .action(deployCommand.bind(null, environment))
-    .on('--help', deployFixedEnvironmentCommandHelp.bind(null, environment))
+    .action(deployCommand.bind(null, environment.branch))
+    .on('--help', deployFixedEnvironmentCommandHelp.bind(null, environment.branch))
 })
 
 // featureDeployerCommander

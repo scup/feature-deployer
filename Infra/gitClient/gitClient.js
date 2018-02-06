@@ -56,6 +56,12 @@ module.exports = {
     const { addCommandOnLog } = Object.assign({}, dependencies, injection)
     addCommandOnLog(`git tag ${tagDescription}`)
     await gitClient.executeGitCommand(['tag', tagDescription])
+  },
+
+  async fetchTags (remote, injection) {
+    const { addCommandOnLog } = Object.assign({}, dependencies, injection)
+    addCommandOnLog(`git fetch ${remote} --tags`)
+    await gitClient.executeGitCommand(['fetch', remote, '--tags'])
   }
 }
 
