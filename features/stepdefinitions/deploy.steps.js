@@ -2,7 +2,7 @@ const { Then } = require('cucumber')
 const { expect } = require('chai')
 
 Then('It switches to main branch', function switchToMainBranch () {
-  expect(this.commandsExecuted.next().value).to.equal('git checkout master -f')
+  expect(this.commandsExecuted.next().value).to.equal('git checkout master')
 })
 
 Then('It downloads the last version of the code', function () {

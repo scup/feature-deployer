@@ -12,7 +12,7 @@ Then(/^It uses directory of (.+)$/, validateChangeDirectoryToProject)
 Then(/^Repeat the steps above on ([a-z-]+) with tag ([a-z0-9_]+)$/, function (projectTwo, gitTag) {
   validateChangeDirectoryToProject.call(this, projectTwo)
 
-  expect(this.commandsExecuted.next().value).to.equal('git checkout master -f')
+  expect(this.commandsExecuted.next().value).to.equal('git checkout master')
   expect(this.commandsExecuted.next().value).to.equal('git pull origin master')
 
   expect(this.commandsExecuted.next().value).to.equal(`git tag ${gitTag}`)

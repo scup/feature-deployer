@@ -20,8 +20,13 @@ async function execute () {
 
     logger.info(chalk.blue('\nNow, wait the deploy on CI!!!'))
   } catch (error) {
-    logger.error(chalk.red(error.stack))
+    logger.error(chalk.red(error.message))
+    logger.verbose(chalk.red(error.stack))
   }
 }
 
 execute()
+
+process.on('unhandledRejection', function (reason, p) {
+  logger.error(chalk.red(reason))
+})

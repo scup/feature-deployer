@@ -40,7 +40,7 @@ async function updateProductionBranch ({ git, log }) {
   log('Init Pull...')
 
   await git.raw(['remote', 'prune', 'origin'])
-  await git.raw(['checkout', '-f'])
+  await git.raw(['checkout'])
   await git.fetch()
   await git.checkout(['production'])
   await git.pull()
