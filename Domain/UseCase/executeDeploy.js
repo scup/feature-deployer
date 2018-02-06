@@ -34,14 +34,18 @@ async function switchToMainBranch ({ environment, deployDescription, now }, inje
 
 module.exports = async function executeDeploy (deployOptions, injection) {
   const { environment, deployDescription, currentProjectPath, now } = deployOptions
+  const needsRelease = NEEDS_RELEASE_ENVIRONMENTS.includes(environment)
+
+  if (needsRelease && !deployDescription) {
+    throw new Error('When executing deploy on production the release should be passed')
+  }
 
   logger.info(chalk.white(`\nInitializing deploy on ${chalk.bold.yellow(currentProjectPath)}`))
 
   logger.info(chalk.white('  · Download last code ⏬'))
 
-  const generatedTagFromRelease = NEEDS_RELEASE_ENVIRONMENTS.includes(environment)
   const tagParts = await (
-    generatedTagFromRelease
+    needsRelease
       ? switchToTag(environment, deployDescription, injection)
       : switchToMainBranch({ environment, deployDescription, now }, injection)
   )
