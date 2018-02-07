@@ -26,11 +26,8 @@ const gitClient = {
     addCommandOnLog(`git ${gitParameters.join(' ')}`)
 
     try {
-      await gitClient.executeGitCommand(gitParameters)
+      return gitClient.executeGitCommand(gitParameters)
     } catch (error) {
-      console.log('#'.repeat(60))
-      console.log('"no":', require('util').inspect("no", { depth: null }))
-      console.log('#'.repeat(60))
       if (!dontFail) {
         return Promise.reject(error)
       }
@@ -38,7 +35,7 @@ const gitClient = {
   }
 }
 
-module.exports = {
+const gitClientApi = {
   changeDirectory (gitDirectory, injection) {
     const { addCommandOnLog, gitPromisified, path, isProduction } = Object.assign({}, dependencies, injection)
     const directoryResolved = path.resolve(gitClient.baseDirectory, gitDirectory)
@@ -80,14 +77,27 @@ module.exports = {
   },
 
   async listTags ({ preffix }, injection) {
-    const tagsToDeleteENV = {
-      qa: ['test_qa_12129_SCARE-1010', 'test_qa_SUFFIX DOES NOT MATTER', 'test_qa_BYE BYE']
-    }
+    const { isProduction, addCommandOnLog } = Object.assign({}, dependencies, injection)
 
-    await gitClient.applyGitCommand(['tag', '-l', `'${preffix}*'`], {}, injection)
+    addCommandOnLog(`git tag -l '${preffix}*'`)
 
-    return tagsToDeleteENV[environment] || null
+    if (!isProduction) return gitClientApi.tags
+
+    const { all } = await gitClient.git.tags()
+    const tags = all.filter(filterByPreffix, { preffix })
+    return tags
+  },
+
+  async deleteTag (origin, tagToDelete, injection) {
+    await gitClient.applyGitCommand(['tag', '-d', `${tagToDelete}`], { dontFail: true }, injection)
+    await gitClient.applyGitCommand(['push', origin, `:${tagToDelete}`], { dontFail: true }, injection)
   }
+}
+
+module.exports = gitClientApi
+
+function filterByPreffix (tag) {
+  return tag.startsWith(this.preffix)
 }
 
 function executeGitCommand (parameters) {
