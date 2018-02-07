@@ -13,6 +13,7 @@
     "integration": "NODE_ENV=test LOG_LEVEL=error TZ=utc cucumber-js",
     "integration:watch": "yarn integration && watch -p 'commands/*.js' -c 'yarn integration'",
     "test": "yarn test-unitary && yarn integration",
+    "cover-unitary": "nyc yarn test-unitary",
     "cover": "nyc yarn test",
     "lint": "standard -v \"commands/**/*.js\" \"features/**/*.js\" \"Domain/**/*.js\" \"Infra/**/*.js\"",
     "lint:fix": "yarn lint --fix",

@@ -85,7 +85,7 @@ const gitClientApi = {
 
     const { all } = await gitClient.git.tags()
     const tags = all.filter(filterByPreffix, { preffix })
-    return tags
+    return tags.length ? tags : null
   },
 
   async deleteTag (origin, tagToDelete, injection) {

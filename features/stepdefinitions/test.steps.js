@@ -9,7 +9,7 @@ const tagsToDelete = {
 Given(/^There are tags on previous releases on environment: (.+)$/, function (environment) {
   this.tagsToDelete = tagsToDelete[environment] || []
   this.environment = environment
-  gitClient.tags = this.tagsToDelete
+  gitClient.tags = this.tagsToDelete.length ? this.tagsToDelete : null
 })
 
 Then(/^It switches to last version of branch (.+)$/, function (branchToTest) {
