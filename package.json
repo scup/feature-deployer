@@ -6,7 +6,8 @@
   "license": "Commercial",
   "private": true,
   "bin": {
-    "feature-deployer": "feature-deployer-bin.js"
+    "feature-deployer": "feature-deployer-bin.js",
+    "older-feature-deployer": "older-feature-deployer-bin.js"
   },
   "scripts": {
     "test-unitary": "NODE_ENV=test LOG_LEVEL=error TZ=utc mocha --colors --reporter min \"Domain/**/*.test.js\" \"Infra/**/*.test.js\"",
