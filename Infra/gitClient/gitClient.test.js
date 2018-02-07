@@ -75,7 +75,7 @@ describe('gitClient', function () {
 
     it('fails on merging branch fails', function (done) {
       this.git.raw = mock('git.raw::failing').throws('Error')
-      const { branchOrTag, git: { raw } } = this
+      const { branchOrTag } = this
 
       gitClient.merge(branchOrTag)
         .then(done.bind(null, 'The call to git.raw failed and the error was not thrown'))
@@ -91,7 +91,7 @@ describe('gitClient', function () {
 
     it('does not fail when delete branch locally fails', function (done) {
       this.git.raw = mock('git.raw::failing').throws('Error')
-      const { branchOrTag, git: { raw } } = this
+      const { branchOrTag } = this
 
       gitClient.deleteBranchLocally(branchOrTag)
         .then(done)
@@ -108,7 +108,7 @@ describe('gitClient', function () {
 
     it('does not fail when delete tag fails', function (done) {
       this.git.raw = mock('git.raw::failing').throws('Error')
-      const { branchOrTag, remote, git: { raw } } = this
+      const { branchOrTag, remote } = this
 
       gitClient.deleteBranchLocally(remote, branchOrTag)
         .then(done)
