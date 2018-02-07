@@ -3,6 +3,6 @@ module.exports = {
   DEFAULT_ORIGIN: 'origin',
   MAIN_BRANCH: 'master',
   TAG_SEPARATOR: '_',
-  RELEASE_PREFIX: 'release',
-  TEST_RELEASE_PREFIX: 'test'
+  RELEASE_PReffix: 'release',
+  TEST_RELEASE_PREFFIX: 'test'
 }

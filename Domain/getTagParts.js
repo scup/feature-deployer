@@ -7,8 +7,8 @@ function getNowDateFormatted (now) {
   return `${year}${month}${day}${hour}${minute}`
 }
 
-function getTagParts ({ environment, suffix, now, prefix }) {
-  const tag = [prefix, environment, getNowDateFormatted(now)]
+function getTagParts ({ environment, suffix, now, preffix }) {
+  const tag = [preffix, environment, getNowDateFormatted(now)]
 
   if (!suffix) return tag
 

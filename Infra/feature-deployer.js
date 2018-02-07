@@ -45,7 +45,7 @@ const fixedDeployEnvironments = {
   }
 }
 
-Object.entries(fixedDeployEnvironments).forEach(function generateFixedEnvironmentsCommands ([alias, environment]) {
+Object.entries(fixedDeployEnvironments).forEach(function generateffixedEnvironmentsCommands ([alias, environment]) {
   featureDeployerCommander
     .command(`deploy-${environment.branch} [${environment.parameter}]`)
     .alias(`d${alias}`)

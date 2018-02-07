@@ -4,7 +4,6 @@ const executeUseCaseForProjects = require('../../../Domain/UseCase/executeUseCas
 module.exports = function testCommand (branch, environment, commanderOptions) {
   const { addCommandOnLog, project: projectPaths, now, currentProjectPath } = commanderOptions.parent
 
-
   const publishToTestUseCase = projectPaths && projectPaths.length ? executeUseCaseForProjects : publishToTest
 
   const injection = { addCommandOnLog, useCase: publishToTest }

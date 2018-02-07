@@ -28,6 +28,9 @@ const gitClient = {
     try {
       await gitClient.executeGitCommand(gitParameters)
     } catch (error) {
+      console.log('#'.repeat(60))
+      console.log('"no":', require('util').inspect("no", { depth: null }))
+      console.log('#'.repeat(60))
       if (!dontFail) {
         return Promise.reject(error)
       }
@@ -74,6 +77,16 @@ module.exports = {
 
   async deleteBranchLocally (branch, injection) {
     return gitClient.applyGitCommand(['branch', '-D', branch], { dontFail: true }, injection)
+  },
+
+  async listTags ({ preffix }, injection) {
+    const tagsToDeleteENV = {
+      qa: ['test_qa_12129_SCARE-1010', 'test_qa_SUFFIX DOES NOT MATTER', 'test_qa_BYE BYE']
+    }
+
+    await gitClient.applyGitCommand(['tag', '-l', `'${preffix}*'`], {}, injection)
+
+    return tagsToDeleteENV[environment] || null
   }
 }
 
