@@ -13,8 +13,8 @@ Feature: Deploy Feature on Projects
 
     Examples:
       | timestamp | command | gitTag | project |
-      | 1517400000000 | --project scup-care deploy-rc | release_rc_201801311200 | scup-care |
-      | 1517489122384 | drc -p scup-care-front | release_rc_201802011245 | scup-care-front |
+      | 1517400000000 | --project scup-care deploy-rc | release_rc_2018-01-31-12-00 | scup-care |
+      | 1517489122384 | drc -p scup-care-front | release_rc_2018-02-01-12-45 | scup-care-front |
 
   Scenario Outline: I am root folder for multiple projects (like scup-care, and children are scup-care-front, scup-care ...)
     Given Now is <timestamp>
@@ -27,5 +27,5 @@ Feature: Deploy Feature on Projects
 
     Examples:
       | timestamp | command | gitTag | project | projectTwo |
-      | 1517400000000 | -p scup-care deploy rc --project scup-care-front | release_rc_201801311200 | scup-care | scup-care-front |
-      | 1517489122384 | --project scup-care-front d rc -p scup-care | release_rc_201802011245 | scup-care-front | scup-care |
+      | 1517400000000 | -p scup-care deploy rc --project scup-care-front | release_rc_2018-01-31-12-00 | scup-care | scup-care-front |
+      | 1517489122384 | --project scup-care-front d rc -p scup-care | release_rc_2018-02-01-12-45 | scup-care-front | scup-care |

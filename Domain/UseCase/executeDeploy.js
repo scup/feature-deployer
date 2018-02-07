@@ -6,12 +6,12 @@ const logger = require('../../Infra/logger')
 
 const { NEEDS_RELEASE_ENVIRONMENTS, DEFAULT_ORIGIN, MAIN_BRANCH, TAG_SEPARATOR, RELEASE_PReffix } = require('./gitDefaultConfiguration')
 
-async function switchToTag (environment, deployDescription, injection) {
+async function switchToTag (environment, deployDescription, now, injection) {
   await gitClient.fetchTags(DEFAULT_ORIGIN, injection)
   await gitClient.checkout(deployDescription, injection)
 
-  const [,, ...oldTagParts] = deployDescription.split(TAG_SEPARATOR)
-  return ['release', environment, ...oldTagParts]
+  const [,,, ...oldTagParts] = deployDescription.split(TAG_SEPARATOR)
+  return ['release', environment, getTagParts.getNowDateFormatted(now), ...oldTagParts]
 }
 
 async function switchToMainBranch ({ environment, deployDescription, now }, injection) {
@@ -35,7 +35,7 @@ module.exports = async function executeDeploy (deployOptions, injection) {
 
   const tagParts = await (
     needsRelease
-      ? switchToTag(environment, deployDescription, injection)
+      ? switchToTag(environment, deployDescription, now, injection)
       : switchToMainBranch({ environment, deployDescription, now }, injection)
   )
 

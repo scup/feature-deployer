@@ -12,12 +12,12 @@ Feature: Deploy Feature
 
     Examples:
       | timestamp | command | gitTag |
-      | 1517400000000 | deploy rc | release_rc_201801311200 |
-      | 1517489122384 | deploy staging | release_staging_201802011245 |
-      | 1517400000000 | d staging deployDescription | release_staging_201801311200_deployDescription |
-      | 1517489122000 | drc | release_rc_201802011245 |
-      | 1517489122384 | deploy-rc deployDescription | release_rc_201802011245_deployDescription |
-      | 1517489122384 | drc deployDescription | release_rc_201802011245_deployDescription |
+      | 1517400000000 | deploy rc | release_rc_2018-01-31-12-00 |
+      | 1517489122384 | deploy staging | release_staging_2018-02-01-12-45 |
+      | 1517400000000 | d staging deployDescription | release_staging_2018-01-31-12-00_deployDescription |
+      | 1517489122000 | drc | release_rc_2018-02-01-12-45 |
+      | 1517489122384 | deploy-rc deployDescription | release_rc_2018-02-01-12-45_deployDescription |
+      | 1517489122384 | drc deployDescription | release_rc_2018-02-01-12-45_deployDescription |
 
   Scenario Outline: Deploy to production
     Given Now is <timestamp>
@@ -28,8 +28,8 @@ Feature: Deploy Feature
 
     Examples:
       | timestamp | command | gitTag |
-      | 1517400000000 | deploy production release_rc_201801311200 | release_production_201801311200 |
-      | 1517400000000 | d production release_rc_201801311200_deployDescription | release_production_201801311200_deployDescription |
-      | 1517489122000 | dprod release_rc_201802011245 | release_production_201802011245 |
-      | 1517489122384 | deploy-production release_rc_201802011245_deployDescription | release_production_201802011245_deployDescription |
-      | 1517489122384 | dprod release_rc_201802011245_deployDescription | release_production_201802011245_deployDescription |
+      | 1518032461994 | deploy production release_rc_2018-01-31-12-00 | release_production_2018-02-07-19-41 |
+      | 1518032461994 | d production release_rc_2018-01-31-12-00_deployDescription | release_production_2018-02-07-19-41_deployDescription |
+      | 1518032461994 | dprod release_rc_2018-02-01-12-45 | release_production_2018-02-07-19-41 |
+      | 1518032461994 | deploy-production release_rc_2018-02-01-12-45_deployDescription | release_production_2018-02-07-19-41_deployDescription |
+      | 1517489122384 | dprod release_rc_2018-01-31-12-00_deployDescription | release_production_2018-02-01-12-45_deployDescription |
