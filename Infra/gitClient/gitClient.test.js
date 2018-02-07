@@ -64,5 +64,12 @@ describe('gitClient', function () {
       assert.calledOnce(raw)
       assert.calledWithExactly(raw, ['fetch', remote, '--tags'])
     })
+
+    it('merges with branch on git', async function () {
+      const { branchOrTag, git: { raw } } = this
+      await gitClient.merge(branchOrTag)
+      assert.calledOnce(raw)
+      assert.calledWithExactly(raw, ['merge', branchOrTag, '--no-edit'])
+    })
   })
 })

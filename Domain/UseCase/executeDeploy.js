@@ -1,21 +1,10 @@
 const chalk = require('chalk')
 const gitClient = require('../../Infra/gitClient')
 
-const getNowDateFormatted = require('../getNowDateFormatted')
+const getTagParts = require('../getTagParts')
 const logger = require('../../Infra/logger')
 
-const NEEDS_RELEASE_ENVIRONMENTS = ['production']
-const DEFAULT_ORIGIN = 'origin'
-const MAIN_BRANCH = 'master'
-const TAG_SEPARATOR = '_'
-
-function getTagParts ({ environment, deployDescription, now }) {
-  const tag = ['release', environment, getNowDateFormatted(now)]
-
-  if (!deployDescription) return tag
-
-  return tag.concat(deployDescription)
-}
+const { NEEDS_RELEASE_ENVIRONMENTS, DEFAULT_ORIGIN, MAIN_BRANCH, TAG_SEPARATOR, RELEASE_PREFIX } = require('./gitDefaultConfiguration')
 
 async function switchToTag (environment, deployDescription, injection) {
   await gitClient.fetchTags(DEFAULT_ORIGIN, injection)
@@ -29,7 +18,7 @@ async function switchToMainBranch ({ environment, deployDescription, now }, inje
   await gitClient.fetch(DEFAULT_ORIGIN, MAIN_BRANCH, injection)
   await gitClient.checkout(MAIN_BRANCH, injection)
 
-  return getTagParts({ environment, deployDescription, now })
+  return getTagParts({ prefix: RELEASE_PREFIX, environment, suffix: deployDescription, now })
 }
 
 module.exports = async function executeDeploy (deployOptions, injection) {

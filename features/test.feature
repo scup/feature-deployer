@@ -6,29 +6,29 @@ Feature: Test Feature
   Scenario Outline: Send a branch to test on a project
     Given Now is <timestamp>
     When I execute the command feature-deployer <command>
-    Then It downloads the last version of main branch
-      And It switches to last version of branch
+    Then It switches to last version of branch <branchToTest>
+      And It downloads the last version of main branch
       And It merges with main branch
-      And It cleans previous release tags
+      # And It cleans previous release tags
       And It creates the tag <gitTestTag>
       And It uploads the created tag to server
       And It switches to main branch
       And It deletes locally the branch
 
     Examples:
-      | timestamp | command | gitTestTag |
-      | 1517400000000 | test SCARE-1010 qa | test_qa_201801311200_SCARE-1010 |
-      | 1517489122384 | t SCARE-1010 qa | test_qa_201802011245_SCARE-1010 |
-      | 1517400000000 | teste SCARE-1012 qa-alfa | test_qa-alfa_201801311200_SCARE-1012 |
+      | timestamp | branchToTest | command | gitTestTag |
+      | 1517400000000 | SCARE-1010 | test SCARE-1010 qa | test_qa_201801311200_SCARE-1010 |
+      | 1517489122384 | SCARE-2020 | t SCARE-2020 qa | test_qa_201802011245_SCARE-2020 |
+      | 1517400000000 | SCARE-1012 | test SCARE-1012 qa-alfa | test_qa-alfa_201801311200_SCARE-1012 |
 
   Scenario Outline: Send a branch to test on multiple projects
     Given Now is <timestamp>
     When I execute the command feature-deployer <command>
     Then It uses directory of <project>
+      And It switches to last version of branch <branchToTest>
       And It downloads the last version of main branch
-      And It switches to last version of branch
       And It merges with main branch
-      And It cleans previous release tags
+      # And It cleans previous release tags
       And It creates the tag <gitTestTag>
       And It uploads the created tag to server
       And It switches to main branch
@@ -36,7 +36,7 @@ Feature: Test Feature
       And It repeats of testing the steps on <projectTwo>
 
     Examples:
-      | timestamp | command | gitTestTag | project | projectTwo |
-      | 1517400000000 | -p scup-care -p scup-care-email test SCARE-1010 qa | test_qa_201801311200_SCARE-1010 | scup-care | scup-care-email |
-      | 1517489122384 | -p scup-care t SCARE-1010 qa --project scup-billing | test_qa_201802011245_SCARE-1010 | scup-care | scup-billing |
-      | 1517400000000 | --project scup-care teste SCARE-1012 qa-alfa --project scup-care-front | test_qa-alfa_201801311200_SCARE-1012 | scup-care | scup-care-front |
+      | timestamp | branchToTest | command | gitTestTag | project | projectTwo |
+      | 1517400000000 | SCARE-1011 | -p scup-care -p scup-care-email test SCARE-1011 qa | test_qa_201801311200_SCARE-1010 | scup-care | scup-care-email |
+      | 1517489122384 | SCARE-1012 | -p scup-care t SCARE-1012 qa --project scup-billing | test_qa_201802011245_SCARE-1010 | scup-care | scup-billing |
+      | 1517400000000 | SCARE-1013 | --project scup-care teste SCARE-1013 qa-alfa --project scup-care-front | test_qa-alfa_201801311200_SCARE-1012 | scup-care | scup-care-front |

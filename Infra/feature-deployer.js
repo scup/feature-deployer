@@ -67,17 +67,22 @@ Object.entries(fixedDeployEnvironments).forEach(function generateFixedEnvironmen
 //     options.parent.help()
 //   })
 
-module.exports = async function (consoleArguments) {
-  const commands = []
-  featureDeployerCommander.addCommandOnLog = function addCommandOnLog (command) {
-    commands.push(command)
-  }
-  featureDeployerCommander.now = new Date()
-  featureDeployerCommander.currentProjectPath = path.basename(process.cwd())
+const commands = []
+featureDeployerCommander.addCommandOnLog = function addCommandOnLog (command) {
+  commands.push(command)
+}
+featureDeployerCommander.now = new Date()
+featureDeployerCommander.currentProjectPath = path.basename(process.cwd())
+
+async function featureDeployer (consoleArguments) {
   await featureDeployerCommander.parse(consoleArguments).promise
 
   return commands
 }
+
+featureDeployer.commands = commands
+
+module.exports = featureDeployer
 
 // const options = {
 //   dirname: commander.dirname,

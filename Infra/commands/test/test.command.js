@@ -1,13 +1,14 @@
-// const executeDeploy = require('../../../Domain/UseCase/executeDeploy')
-// const executeDeployOnProject = require('../../../Domain/UseCase/executeDeployOnProject')
+const publishToTest = require('../../../Domain/UseCase/publishToTest')
+const executeUseCaseForProjects = require('../../../Domain/UseCase/executeUseCaseForProjects')
 
 module.exports = function testCommand (branch, environment, commanderOptions) {
-  // const { addCommandOnLog, project: projectPaths, now, currentProjectPath } = commanderOptions.parent
+  const { addCommandOnLog, project: projectPaths, now, currentProjectPath } = commanderOptions.parent
 
-  // const deployUseCase = projectPaths && projectPaths.length ? executeDeployOnProjects : executeDeploy
 
-  // const injection = { addCommandOnLog }
-  // const deployOptions = { currentProjectPath, environment, deployDescription, projectPaths, now }
+  const publishToTestUseCase = projectPaths && projectPaths.length ? executeUseCaseForProjects : publishToTest
 
-  commanderOptions.parent.promise = Promise.resolve('a')
+  const injection = { addCommandOnLog, useCase: publishToTest }
+  const publishToTestOptions = { currentProjectPath, branch, environment, projectPaths, now }
+
+  commanderOptions.parent.promise = publishToTestUseCase(publishToTestOptions, injection)
 }

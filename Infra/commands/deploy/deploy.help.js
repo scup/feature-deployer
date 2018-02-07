@@ -1,5 +1,5 @@
 const chalk = require('chalk')
-const getNowDateFormatted = require('../../../Domain/getNowDateFormatted')
+const { getNowDateFormatted } = require('../../../Domain/getTagParts')
 
 function deployFixedEnvironmentCommandHelp (fixedEnvironment) {
   const now = new Date()

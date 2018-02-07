@@ -3,6 +3,13 @@ const path = require('path')
 
 const environment = require('../configuration/environment')
 
+const dependencies = {
+  gitPromisified,
+  path,
+  addCommandOnLog: noop,
+  isProduction: process.env.NODE_ENV !== 'test'
+}
+
 const executeGitCommandForEnvironment = {
   production: executeGitCommand,
   test: noop
@@ -12,14 +19,20 @@ const baseDirectory = process.cwd()
 const gitClient = {
   baseDirectory,
   git: gitPromisified(baseDirectory),
-  executeGitCommand: executeGitCommandForEnvironment[environment]
-}
+  executeGitCommand: executeGitCommandForEnvironment[environment],
+  async applyGitCommand (gitParameters, { dontFail }, injection) {
+    const { addCommandOnLog } = Object.assign({}, dependencies, injection)
 
-const dependencies = {
-  gitPromisified,
-  path,
-  addCommandOnLog: noop,
-  isProduction: process.env.NODE_ENV !== 'test'
+    addCommandOnLog(`git ${gitParameters.join(' ')}`)
+
+    try {
+      await gitClient.executeGitCommand(gitParameters)
+    } catch (error) {
+      if (!dontFail) {
+        return Promise.reject(error)
+      }
+    }
+  }
 }
 
 module.exports = {
@@ -35,34 +48,32 @@ module.exports = {
   },
 
   async fetch (remote, branch, injection) {
-    const { addCommandOnLog } = Object.assign({}, dependencies, injection)
     const fetchBranch = `${branch}:${branch}`
-    addCommandOnLog(`git fetch ${remote} ${fetchBranch}`)
-    await gitClient.executeGitCommand(['fetch', remote, fetchBranch])
+    return gitClient.applyGitCommand(['fetch', remote, fetchBranch], {}, injection)
   },
 
   async push (remote, branchOrTag, injection) {
-    const { addCommandOnLog } = Object.assign({}, dependencies, injection)
-    addCommandOnLog(`git push ${remote} ${branchOrTag}`)
-    await gitClient.executeGitCommand(['push', remote, branchOrTag])
+    return gitClient.applyGitCommand(['push', remote, branchOrTag], {}, injection)
   },
 
   async checkout (branchOrTag, injection) {
-    const { addCommandOnLog } = Object.assign({}, dependencies, injection)
-    addCommandOnLog(`git checkout ${branchOrTag}`)
-    await gitClient.executeGitCommand(['checkout', branchOrTag])
+    return gitClient.applyGitCommand(['checkout', branchOrTag], {}, injection)
   },
 
   async tag (tagDescription, injection) {
-    const { addCommandOnLog } = Object.assign({}, dependencies, injection)
-    addCommandOnLog(`git tag ${tagDescription}`)
-    await gitClient.executeGitCommand(['tag', tagDescription])
+    return gitClient.applyGitCommand(['tag', tagDescription], {}, injection)
   },
 
   async fetchTags (remote, injection) {
-    const { addCommandOnLog } = Object.assign({}, dependencies, injection)
-    addCommandOnLog(`git fetch ${remote} --tags`)
-    await gitClient.executeGitCommand(['fetch', remote, '--tags'])
+    return gitClient.applyGitCommand(['fetch', remote, '--tags'], {}, injection)
+  },
+
+  async merge (branch, injection) {
+    return gitClient.applyGitCommand(['merge', branch, '--no-edit'], {}, injection)
+  },
+
+  async deleteBranchLocally (branch, injection) {
+    return gitClient.applyGitCommand(['branch', '-D', branch], { dontFail: true }, injection)
   }
 }
 
