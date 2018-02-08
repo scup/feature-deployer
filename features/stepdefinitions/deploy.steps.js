@@ -2,8 +2,7 @@ const { Then } = require('cucumber')
 const { expect } = require('chai')
 
 Then('It switches to last version of main branch', function switchToMainBranch () {
-  expect(this.commandsExecuted.next().value).to.equal('git fetch origin master:master')
-  expect(this.commandsExecuted.next().value).to.equal('git checkout master')
+  expect(this.commandsExecuted.next().value).to.equal('git pull origin master')
 })
 
 Then(/^It creates the tag (.+)$/, function (gitTag) {

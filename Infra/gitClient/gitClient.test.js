@@ -45,6 +45,13 @@ describe('gitClient', function () {
       assert.calledWithExactly(raw, ['push', remote, branchOrTag])
     })
 
+    it('pushes on git', async function () {
+      const { remote, branchOrTag, git: { raw } } = this
+      await gitClient.pull(remote, branchOrTag)
+      assert.calledOnce(raw)
+      assert.calledWithExactly(raw, ['pull', remote, branchOrTag])
+    })
+
     it('checkouts on git', async function () {
       const { branchOrTag, git: { raw } } = this
       await gitClient.checkout(branchOrTag)
