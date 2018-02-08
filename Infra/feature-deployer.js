@@ -54,19 +54,6 @@ Object.entries(fixedDeployEnvironments).forEach(function generateffixedEnvironme
     .on('--help', deployFixedEnvironmentCommandHelp.bind(null, environment.branch))
 })
 
-// featureDeployerCommander
-//   .option('-v, --verbose [a]', 'A value that can be increased', a.bind(featureDeployerCommander), [])
-//   .option('-v, --verbose <a>', 'A value that can be increased', a.bind(featureDeployerCommander), [])
-
-// featureDeployerCommander
-//   .command('*')
-//   .action(function(){
-//     const options = Array.from(arguments).pop()
-//     // console.log(chalk.red('a'))
-//     console.log(chalk.keyword('orange')('Yay for orange colored text!'))
-//     options.parent.help()
-//   })
-
 const commands = []
 featureDeployerCommander.addCommandOnLog = function addCommandOnLog (command) {
   commands.push(command)
@@ -83,18 +70,3 @@ async function featureDeployer (consoleArguments) {
 featureDeployer.commands = commands
 
 module.exports = featureDeployer
-
-// const options = {
-//   dirname: commander.dirname,
-//   feature,
-//   approve: commander.approveFeature,
-//   repprove: commander.repproveFeature,
-//   maxBranches: Number(maxBranches)
-// }
-
-// deployFeature(options)
-//   .catch(handleError)
-
-// function handleError (error) {
-//   console.log(chalk.red('%s'), error)
-// }
