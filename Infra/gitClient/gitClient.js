@@ -74,6 +74,10 @@ const gitClientApi = {
     return gitClient.applyGitCommand(['push', remote, branchOrTag], {}, injection)
   },
 
+  async pull (remote, branchOrTag, injection) {
+    return gitClient.applyGitCommand(['pull', remote, branchOrTag], {}, injection)
+  },
+
   async checkout (branchOrTag, injection) {
     return gitClient.applyGitCommand(['checkout', branchOrTag], {}, injection)
   },
