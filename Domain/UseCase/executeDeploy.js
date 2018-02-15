@@ -15,7 +15,7 @@ async function switchToTag (environment, deployDescription, now, injection) {
 }
 
 async function switchToMainBranch ({ environment, deployDescription, now }, injection) {
-  await gitClient.fetch(DEFAULT_ORIGIN, MAIN_BRANCH, injection)
+  await gitClient.download(DEFAULT_ORIGIN, MAIN_BRANCH, injection)
   await gitClient.checkout(MAIN_BRANCH, injection)
 
   return getTagParts({ preffix: RELEASE_PReffix, environment, suffix: deployDescription, now })

@@ -12,14 +12,14 @@ module.exports = async function publishToTest (publishToTestOptions, injection) 
   logger.info(chalk.white(`\nInitializing test release on ${chalk.bold.yellow(currentProjectPath)}`))
 
   logger.info(chalk.white(`  · Download last code of ${chalk.blue(branch)} ⏬`))
-  await gitClient.fetch(DEFAULT_ORIGIN, branch, injection)
+  await gitClient.download(DEFAULT_ORIGIN, branch, injection)
 
   await gitClient.checkout(branch, injection)
 
   logger.info(chalk.white(`  · Download last code of ${chalk.blue(MAIN_BRANCH)} ⏬`))
   await gitClient.fetchTags(DEFAULT_ORIGIN, injection)
   await gitClient.deleteBranchLocally(MAIN_BRANCH, injection)
-  await gitClient.fetch(DEFAULT_ORIGIN, MAIN_BRANCH, injection)
+  await gitClient.download(DEFAULT_ORIGIN, MAIN_BRANCH, injection)
 
   logger.info(chalk.white(`  · Merging with master of ${chalk.blue(branch)} ⏬`))
   await gitClient.merge(MAIN_BRANCH, injection)

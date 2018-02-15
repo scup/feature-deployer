@@ -47,8 +47,26 @@ const gitClientApi = {
     }
   },
 
-  async fetch (remote, branch, injection) {
+  async currentBranch(injection) {
+    const { isProduction } = Object.assign({}, dependencies, injection)
+
+    if (!isProduction) return null
+
+    const { current } = await gitClient.git.branch()
+    return current
+  },
+
+  async download (remote, branch, injection) {
+    const { isProduction, addCommandOnLog } = Object.assign({}, dependencies, injection)
+
+    const currentBranch = await gitClientApi.currentBranch(injection)
+
+    if (currentBranch === branch) {
+      return gitClient.applyGitCommand(['pull', remote, branch], {}, injection)
+    }
+
     const fetchBranch = `${branch}:${branch}`
+
     return gitClient.applyGitCommand(['fetch', remote, fetchBranch], {}, injection)
   },
 

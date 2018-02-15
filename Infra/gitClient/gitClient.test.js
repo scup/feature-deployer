@@ -31,11 +31,20 @@ describe('gitClient', function () {
       gitClient.changeDirectory(gitDirectory, dependencies)
     })
 
-    it('fetchs an branch on git', async function () {
+    it('fetchs an branch on git when current branch is different', async function () {
       const { remote, branchOrTag, git: { raw } } = this
-      await gitClient.fetch(remote, branchOrTag)
+      this.git.branch = mock().resolves({ current: 'not-the-same-branch' })
+      await gitClient.download(remote, branchOrTag,  { isProduction: true })
       assert.calledOnce(raw)
       assert.calledWithExactly(raw, ['fetch', remote, `${branchOrTag}:${branchOrTag}`])
+    })
+
+    it('pulls the branch on git when current branch is the same', async function () {
+      const { remote, branchOrTag, git: { raw } } = this
+      this.git.branch = mock().resolves({ current: branchOrTag })
+      await gitClient.download(remote, branchOrTag,  { isProduction: true })
+      assert.calledOnce(raw)
+      assert.calledWithExactly(raw, ['pull', remote, branchOrTag])
     })
 
     it('pushes on git', async function () {
