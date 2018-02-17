@@ -22,7 +22,7 @@ When he finishes the job and the code review is done, an PR to branch `master` s
 #### 1.2 HOTFIX (take care, read carefully)
 When a hotfix needs to happen, branch of `master` generating you hotfix branch, for instance `hotfix-query-timeline`, execute the fix and upload a tag `release_production_hotfix_query-timeline`. And the CI will deploy it!
 
-The open a PR to **master** branch and talk to some people to review it and merge into master.
+Then open a PR to **master** branch and talk to some people to review it and merge into master.
 
 > Our convention is, `release_<environment>_<hotfixdescription>`, the CI deploys based on `release_<environment>_*`, and when this document was written just **production** and **rc** are the environments 
 

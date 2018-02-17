@@ -57,8 +57,6 @@ const gitClientApi = {
   },
 
   async download (remote, branch, injection) {
-    const { isProduction, addCommandOnLog } = Object.assign({}, dependencies, injection)
-
     const currentBranch = await gitClientApi.currentBranch(injection)
 
     if (currentBranch === branch) {
