@@ -34,7 +34,7 @@ describe('gitClient', function () {
     it('fetchs an branch on git when current branch is different', async function () {
       const { remote, branchOrTag, git: { raw } } = this
       this.git.branch = mock().resolves({ current: 'not-the-same-branch' })
-      await gitClient.download(remote, branchOrTag,  { isProduction: true })
+      await gitClient.download(remote, branchOrTag, { isProduction: true })
       assert.calledOnce(raw)
       assert.calledWithExactly(raw, ['fetch', remote, `${branchOrTag}:${branchOrTag}`])
     })
@@ -42,7 +42,7 @@ describe('gitClient', function () {
     it('pulls the branch on git when current branch is the same', async function () {
       const { remote, branchOrTag, git: { raw } } = this
       this.git.branch = mock().resolves({ current: branchOrTag })
-      await gitClient.download(remote, branchOrTag,  { isProduction: true })
+      await gitClient.download(remote, branchOrTag, { isProduction: true })
       assert.calledOnce(raw)
       assert.calledWithExactly(raw, ['pull', remote, branchOrTag])
     })

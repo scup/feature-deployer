@@ -47,7 +47,7 @@ const gitClientApi = {
     }
   },
 
-  async currentBranch(injection) {
+  async currentBranch (injection) {
     const { isProduction } = Object.assign({}, dependencies, injection)
 
     if (!isProduction) return null
