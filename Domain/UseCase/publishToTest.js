@@ -15,13 +15,15 @@ module.exports = async function publishToTest (publishToTestOptions, injection) 
   await gitClient.fetchTags(DEFAULT_ORIGIN, injection)
   await gitClient.download(DEFAULT_ORIGIN, MAIN_BRANCH, injection)
 
-  logger.info(chalk.white(`  · Download last code of ${chalk.blue(branch)} ⏬`))
-  await gitClient.download(DEFAULT_ORIGIN, branch, injection)
+  if (branch) {
+    logger.info(chalk.white(`  · Download last code of ${chalk.blue(branch)} ⏬`))
+    await gitClient.download(DEFAULT_ORIGIN, branch, injection)
 
-  await gitClient.checkout(branch, injection)
+    await gitClient.checkout(branch, injection)
 
-  logger.info(chalk.white(`  · Merging with master of ${chalk.blue(branch)} ⏬`))
-  await gitClient.merge(MAIN_BRANCH, injection)
+    logger.info(chalk.white(`  · Merging with master of ${chalk.blue(branch)} ⏬`))
+    await gitClient.merge(MAIN_BRANCH, injection)
+  }
 
   logger.info(chalk.white(`  · Searching for previous test release tags 🔎`))
   const tagPreffix = `${TEST_RELEASE_PREFFIX}${TAG_SEPARATOR}${environment}${TAG_SEPARATOR}`
@@ -38,13 +40,13 @@ module.exports = async function publishToTest (publishToTestOptions, injection) 
   }
 
   logger.info(chalk.white(`  · Nice! no conflicts, creating and uploading test release ✅`))
-  const tagParts = getTagParts({ environment, preffix: TEST_RELEASE_PREFFIX, now, suffix: branch })
+  const tagParts = getTagParts({ environment, preffix: TEST_RELEASE_PREFFIX, now, suffix: branch || MAIN_BRANCH })
   const tag = tagParts.join(TAG_SEPARATOR)
 
   await gitClient.tag(tag, injection)
   await gitClient.push(DEFAULT_ORIGIN, tag, injection)
   await gitClient.checkout(MAIN_BRANCH, injection)
-  await gitClient.deleteBranchLocally(branch, injection)
+  await branch && gitClient.deleteBranchLocally(branch, injection)
 
   logger.info(chalk.white(`  · Done 👍🏾 , the release ${chalk.bold.yellow(tag)} is published!`))
 }

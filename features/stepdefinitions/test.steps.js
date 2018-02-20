@@ -59,3 +59,14 @@ Then(/^It repeats of testing the steps on ([^\s]+)$/, function (projectTwo) {
   expect(this.commandsExecuted.next().value).to.equal('git checkout master')
   expect(this.commandsExecuted.next().value).to.equal(`git branch -D ${this.branch}`)
 })
+
+Then(/^It repeats of clear test the steps on ([^\s]+)$/, function (projectTwo) {
+  this.validateChangeDirectoryToProject(projectTwo)
+
+  expect(this.commandsExecuted.next().value).to.equal('git fetch origin --tags')
+  expect(this.commandsExecuted.next().value).to.equal('git fetch origin master:master')
+  expect(this.commandsExecuted.next().value).to.equal(`git tag -l 'test_${this.environment}_*'`)
+  expect(this.commandsExecuted.next().value).to.equal(`git tag ${this.gitTag}`)
+  expect(this.commandsExecuted.next().value).to.equal(`git push origin ${this.gitTag}`)
+  expect(this.commandsExecuted.next().value).to.equal('git checkout master')
+})

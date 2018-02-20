@@ -37,22 +37,32 @@ The syntax is `feature-deployer test|t <branch> <environment> [--project <projec
 
     1. if you are on **scup-care/scup-care-front** folder execute:
 		```	
-        ~/scup-care/scup-care-front/$ feature-deployer test SCARE-1212 qa
+        ~/scup-care-docker/scup-care-front/$ feature-deployer test SCARE-1212 qa
 		```        
 
     2. if you are on **scup-care** folder execute:
 		```	
-        ~/scup-care/$ feature-deployer test SCARE-1212 qa --project scup-care-front
+        ~/scup-care-docker/$ feature-deployer test SCARE-1212 qa --project scup-care-front
 		```
 
 * Send the branch `SCARE-1212` to **qa** on **scup-care-front**, **scup-care-email** and **scup-care**(back)
 
 	* You **should** be on root folder **scup-care** folder execute:
 		```	
-        ~/scup-care/$ feature-deployer t SCARE-1212 qa -p scup-care-front -p scup-care-email -p scup-care
+        ~/scup-care-docker/$ feature-deployer t SCARE-1212 qa -p scup-care-front -p scup-care-email -p scup-care
 		```
         
 > `t` is alias to **test** and `-p` is alias to **--project**
+
+If you want to clear a test environment
+```
+  ~/scup-care-docker/scup-care-front/$ feature-deployer clear-test qa2
+  
+#or
+
+  ~/scup-care-docker/$ feature-deployer -p scup-care-front clear-test qa2
+```
+
 
 ### 3. Deploy to RC and PROD
 
