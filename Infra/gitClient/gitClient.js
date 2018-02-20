@@ -26,7 +26,7 @@ const gitClient = {
     addCommandOnLog(`git ${gitParameters.join(' ')}`)
 
     try {
-      return gitClient.executeGitCommand(gitParameters)
+      await gitClient.executeGitCommand(gitParameters)
     } catch (error) {
       if (!dontFail) {
         return Promise.reject(error)
