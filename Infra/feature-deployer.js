@@ -76,7 +76,7 @@ featureDeployerCommander.now = new Date()
 featureDeployerCommander.currentProjectPath = path.basename(currentProjectPath)
 
 async function featureDeployer (consoleArguments) {
-  logger.info(chalk.white(`\nCurrent directory execution: ${chalk.bold.yellow(currentExecutionPath)}`))
+  logger.info(chalk.white(`\nCurrent directory execution: ${chalk.yellow.bold(currentExecutionPath)}`))
   await featureDeployerCommander.parse(consoleArguments).promise
 
   return commands

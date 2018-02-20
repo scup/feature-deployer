@@ -4,31 +4,36 @@ const logger = require('./Infra/logger')
 
 const featureDeployer = require('./Infra/feature-deployer')
 
-function logCommand (command) {
-  logger.info(chalk.green(command))
+function logCommand (command, index, array) {
+  const color = index === array.length - 1 ? this.color : 'green'
+  logger.info(chalk[color](command))
 }
 
-function logExecutedCommands (commands) {
+function logExecutedCommands ({ commands, error }) {
   if (!commands || !commands.length) return
 
   logger.info(chalk.white('\nExecuted Plan:\n'))
 
-  commands.forEach(logCommand)
+  commands.forEach(logCommand, { color: error ? 'red' : 'green' })
 
-  logger.info('\n')
+  logger.info('')
 }
 
 async function execute () {
   try {
     const commands = await featureDeployer(process.argv)
 
-    logExecutedCommands(commands)
+    logExecutedCommands({ commands, error: false })
 
     logger.info(chalk.blue('Now, wait the deploy on CI!!!'))
   } catch (error) {
-    logger.verbose(chalk.red(error.stack))
+    logExecutedCommands({ commands: featureDeployer.commands, error: true })
 
-    logExecutedCommands(featureDeployer.commands)
+    logger.info(chalk.red(`ErrorMessage: ${chalk.red.bold(error.message)}`))
+    logger.info('')
+    logger.info(chalk.red('❌ ❌ 😭 😭  Unfortunately it did not work 😭 😭 ❌ ❌'))
+    logger.verbose(chalk.red(error.stack))
+    process.exit(1)
   }
 }
 

@@ -137,8 +137,8 @@ module.exports = async function deployFeature (options, injection) {
 
   const resolvedDependencies = { git: gitPromissified(dirname), log, chalk }
 
-  log(`Using dirname: ${chalk.bold.yellow(dirname)}`)
-  log(`Starting deploy of feature ${chalk.bold.green(feature)}...`)
+  log(`Using dirname: ${chalk.yellow.bold(dirname)}`)
+  log(`Starting deploy of feature ${chalk.green.bold(feature)}...`)
   log()
 
   await updateProductionBranch(resolvedDependencies)
@@ -157,5 +157,5 @@ module.exports = async function deployFeature (options, injection) {
     log(`${chalk.green('REPROVED')} and removed from qa`)
   }
 
-  log(chalk.bold.green('OK!'))
+  log(chalk.green.bold('OK!'))
 }

@@ -9,7 +9,7 @@ const { DEFAULT_ORIGIN, MAIN_BRANCH, TAG_SEPARATOR, TEST_RELEASE_PREFFIX } = req
 module.exports = async function publishToTest (publishToTestOptions, injection) {
   const { branch, environment, currentProjectPath, now } = publishToTestOptions
 
-  logger.info(chalk.white(`\nInitializing test release on ${chalk.bold.yellow(currentProjectPath)}`))
+  logger.info(chalk.white(`\nInitializing test release on ${chalk.yellow.bold(currentProjectPath)}`))
 
   logger.info(chalk.white(`  · Download last code of ${chalk.blue(MAIN_BRANCH)} ⏬`))
   await gitClient.fetchTags(DEFAULT_ORIGIN, injection)
@@ -48,5 +48,5 @@ module.exports = async function publishToTest (publishToTestOptions, injection) 
   await gitClient.checkout(MAIN_BRANCH, injection)
   await branch && gitClient.deleteBranchLocally(branch, injection)
 
-  logger.info(chalk.white(`  · Done 👍🏾 , the release ${chalk.bold.yellow(tag)} is published!`))
+  logger.info(chalk.white(`  · Done 👍🏾 , the release ${chalk.yellow.bold(tag)} is published!`))
 }

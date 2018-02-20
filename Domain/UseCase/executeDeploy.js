@@ -29,7 +29,7 @@ module.exports = async function executeDeploy (deployOptions, injection) {
     throw new Error('When executing deploy on production the release should be passed')
   }
 
-  logger.info(chalk.white(`\nInitializing deploy on ${chalk.bold.yellow(currentProjectPath)}`))
+  logger.info(chalk.white(`\nInitializing deploy on ${chalk.yellow.bold(currentProjectPath)}`))
 
   logger.info(chalk.white('  · Download last code ⏬'))
 
@@ -45,5 +45,5 @@ module.exports = async function executeDeploy (deployOptions, injection) {
   logger.info(chalk.white('  · Uploading release ✅'))
   await gitClient.push(DEFAULT_ORIGIN, tag, injection)
 
-  logger.info(chalk.white(`  · Done 👍🏾 , the release ${chalk.bold.yellow(tag)} is published!`))
+  logger.info(chalk.white(`  · Done 👍🏾 , the release ${chalk.yellow.bold(tag)} is published!`))
 }

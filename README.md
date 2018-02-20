@@ -91,4 +91,4 @@ the syntax is
 	2. on **root folder**, in order to deploy more than a project, `feature-deployer dprod release_rc_2018-01-31-12-00_niceFeature -p scup-care-front -p scup-care` this will generate the release tag `release_production_<currentDate>_niceFeature`, on **scup-care-front** and **scup-care** projects.
 
 ## The older feature deployer
-Was renamed to `old-feature-deployer`
+Was renamed to `older-feature-deployer`
