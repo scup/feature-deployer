@@ -12,16 +12,15 @@ Given(/^There are tags on previous releases on environment: (.+)$/, function (en
   gitClient.tags = this.tagsToDelete.length ? this.tagsToDelete : null
 })
 
+Then('It downloads the last version of main branch', function switchToMainBranch () {
+  expect(this.commandsExecuted.next().value).to.equal('git fetch origin --tags')
+  expect(this.commandsExecuted.next().value).to.equal('git fetch origin master:master')
+})
+
 Then(/^It switches to last version of branch (.+)$/, function (branchToTest) {
   this.branch = branchToTest
   expect(this.commandsExecuted.next().value).to.equal(`git fetch origin ${branchToTest}:${branchToTest}`)
   expect(this.commandsExecuted.next().value).to.equal(`git checkout ${branchToTest}`)
-})
-
-Then('It downloads the last version of main branch', function switchToMainBranch () {
-  expect(this.commandsExecuted.next().value).to.equal('git fetch origin --tags')
-  expect(this.commandsExecuted.next().value).to.equal('git branch -D master')
-  expect(this.commandsExecuted.next().value).to.equal('git fetch origin master:master')
 })
 
 Then('It merges with main branch', function () {
@@ -49,11 +48,10 @@ Then('It deletes locally the branch', function () {
 Then(/^It repeats of testing the steps on ([^\s]+)$/, function (projectTwo) {
   this.validateChangeDirectoryToProject(projectTwo)
 
+  expect(this.commandsExecuted.next().value).to.equal('git fetch origin --tags')
+  expect(this.commandsExecuted.next().value).to.equal('git fetch origin master:master')
   expect(this.commandsExecuted.next().value).to.equal(`git fetch origin ${this.branch}:${this.branch}`)
   expect(this.commandsExecuted.next().value).to.equal(`git checkout ${this.branch}`)
-  expect(this.commandsExecuted.next().value).to.equal('git fetch origin --tags')
-  expect(this.commandsExecuted.next().value).to.equal('git branch -D master')
-  expect(this.commandsExecuted.next().value).to.equal('git fetch origin master:master')
   expect(this.commandsExecuted.next().value).to.equal('git merge master --no-edit')
   expect(this.commandsExecuted.next().value).to.equal(`git tag -l 'test_${this.environment}_*'`)
   expect(this.commandsExecuted.next().value).to.equal(`git tag ${this.gitTag}`)

@@ -1,0 +1,6 @@
+{
+  "name": "Clear Test Command",
+  "description": "Generates a test tag from master code, and uploads to server",
+  "private": true,
+  "main": "./clearTest.command.js"
+}

@@ -7,8 +7,8 @@ Feature: Test Feature
     Given Now is <timestamp>
       And There are tags on previous releases on environment: <environment>
     When I execute the command feature-deployer <command>
-    Then It switches to last version of branch <branchToTest>
-      And It downloads the last version of main branch
+    Then It downloads the last version of main branch
+      And It switches to last version of branch <branchToTest>
       And It merges with main branch
       And It cleans previous release test tags on same the environment
       And It creates the tag <gitTestTag>
@@ -27,8 +27,8 @@ Feature: Test Feature
       And There are tags on previous releases on environment: <environment>
     When I execute the command feature-deployer <command>
     Then It uses directory of <project>
-      And It switches to last version of branch <branchToTest>
       And It downloads the last version of main branch
+      And It switches to last version of branch <branchToTest>
       And It merges with main branch
       And It cleans previous release test tags on same the environment
       And It creates the tag <gitTestTag>

@@ -1,4 +1,7 @@
 const path = require('path')
+const chalk = require('chalk')
+
+const logger = require('./logger')
 
 const deployCommand = require('./commands/deploy')
 const deployCommandData = require('./commands/deploy/package.json')
@@ -7,6 +10,9 @@ const { deployFixedEnvironmentCommandHelp } = require('./commands/deploy/deploy.
 
 const testCommand = require('./commands/test')
 const testCommandData = require('./commands/test/package.json')
+
+const clearTestCommand = require('./commands/clearTest')
+const clearTestCommandData = require('./commands/clearTest/package.json')
 
 const packageData = require('../package.json')
 
@@ -34,6 +40,12 @@ featureDeployerCommander
   .description(testCommandData.deployDescription)
   .action(testCommand)
 
+featureDeployerCommander
+  .command('clear-test <environment>')
+  .alias('ct')
+  .description(clearTestCommandData.deployDescription)
+  .action(clearTestCommand)
+
 const fixedDeployEnvironments = {
   rc: {
     branch: 'rc',
@@ -55,13 +67,16 @@ Object.entries(fixedDeployEnvironments).forEach(function generateffixedEnvironme
 })
 
 const commands = []
+const currentProjectPath = process.cwd()
+const currentExecutionPath = currentProjectPath.replace(process.env.HOME, '~')
 featureDeployerCommander.addCommandOnLog = function addCommandOnLog (command) {
   commands.push(command)
 }
 featureDeployerCommander.now = new Date()
-featureDeployerCommander.currentProjectPath = path.basename(process.cwd())
+featureDeployerCommander.currentProjectPath = path.basename(currentProjectPath)
 
 async function featureDeployer (consoleArguments) {
+  logger.info(chalk.white(`\nCurrent directory execution: ${chalk.bold.yellow(currentExecutionPath)}`))
   await featureDeployerCommander.parse(consoleArguments).promise
 
   return commands
