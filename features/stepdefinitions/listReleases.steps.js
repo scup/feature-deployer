@@ -6,9 +6,9 @@ const tagFixture = require('../../Infra/gitClient/tag.fixture')
 
 Given('There are tags on repositories', function () {
   const tags = tagFixture.buildList(2)
-  tags[0].tagname = 'release_rc_dateNOW'
+  tags[0].tagname = 'release_production_dateNOW'
   tags[1].tagname = 'release_production_dateNOW'
-  tags[0].refname = 'refs/tags/release_rc_dateNOW'
+  tags[0].refname = 'refs/tags/release_production_dateNOW'
   tags[1].refname = 'refs/tags/release_production_dateNOW'
   const git = {
     raw: mock('git.raw')

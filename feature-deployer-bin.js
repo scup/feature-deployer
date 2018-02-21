@@ -5,7 +5,7 @@ const logger = require('./Infra/logger')
 const featureDeployer = require('./Infra/feature-deployer')
 
 function logCommand (command, index, array) {
-  const color = index === array.length - 1 ? this.color : 'green'
+  const color = index === array.length - 1 ? this.errorColor : 'grey'
   logger.info(chalk[color](command))
 }
 
@@ -14,7 +14,7 @@ function logExecutedCommands ({ commands, error }) {
 
   logger.info(chalk.white('\nExecuted Plan:\n'))
 
-  commands.forEach(logCommand, { color: error ? 'red' : 'green' })
+  commands.forEach(logCommand, { errorColor: error ? 'red' : 'grey' })
 
   logger.info('')
 }
@@ -25,7 +25,7 @@ async function execute () {
 
     logExecutedCommands({ commands, error: false })
 
-    logger.info(chalk.blue('Now, wait the deploy on CI!!!'))
+    logger.info(chalk.green.bold('✨  Command execute successfully!!!'))
   } catch (error) {
     logExecutedCommands({ commands: featureDeployer.commands, error: true })
 
