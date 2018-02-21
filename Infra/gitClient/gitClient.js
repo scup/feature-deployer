@@ -107,7 +107,7 @@ const gitClientApi = {
 
     const format = formatFields.map(toGitField).join(randomSeparator)
 
-    const tags = await gitClient.applyGitCommand(['for-each-ref', `--sort=-${sortField}`, `--format="${format}"`, `--count=100` ,'refs/tags'], {}, injection)
+    const tags = await gitClient.applyGitCommand(['for-each-ref', `--sort=-${sortField}`, `--format=${format}`, `--count=100` ,'refs/tags'], {}, injection)
 
     return `${tags}`.split('\n').reduce(toGitTagObject, { fields: formatFields, randomSeparator, filter, tags: [] }).tags
   },

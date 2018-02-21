@@ -163,7 +163,7 @@ describe('gitClient', function () {
     const DEFAULT_DETAILED_TAG_COMMAND = [
       'for-each-ref',
       '--sort=-taggerdate',
-      '--format="%(refname)#%(authordate)#%(authorname)#%(authoremail)"',
+      '--format=%(refname)#%(authordate)#%(authorname)#%(authoremail)',
       '--count=100',
       'refs/tags'
     ]
@@ -205,7 +205,7 @@ describe('gitClient', function () {
     it('detail tags sortby authorname and getting fields authorname', async function () {
       const { remote } = this
       this.git.raw = mock('git for-each-ref tags')
-        .withExactArgs(['for-each-ref', '--sort=-authorname', '--format="%(refname)#%(authorname)"', '--count=100', 'refs/tags'])
+        .withExactArgs(['for-each-ref', '--sort=-authorname', '--format=%(refname)#%(authorname)', '--count=100', 'refs/tags'])
         .resolves('tag#firstAuthor')
 
       const detailedTags = await gitClient.detailTags({
