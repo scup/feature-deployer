@@ -164,7 +164,7 @@ describe('gitClient', function () {
       'for-each-ref',
       '--sort=-taggerdate',
       '--format="%(refname)#%(authordate)#%(authorname)#%(authoremail)"',
-      '--count=10',
+      '--count=100',
       'refs/tags'
     ]
     const detailedTagsDependencies = { randomSeparator: '#' }
@@ -176,7 +176,7 @@ describe('gitClient', function () {
         .withExactArgs(DEFAULT_DETAILED_TAG_COMMAND)
         .resolves(tags.map(tagFixture.toGitTag).join('\n'))
 
-      const detailedTags = await gitClient.detailTags({ filter: /./, count: 10 }, detailedTagsDependencies)
+      const detailedTags = await gitClient.detailTags({ filter: /./ }, detailedTagsDependencies)
 
       expect(detailedTags).to.deep.equal(tags.map(tagFixture.convertDates))
     })
@@ -197,7 +197,7 @@ describe('gitClient', function () {
         .withExactArgs(DEFAULT_DETAILED_TAG_COMMAND)
         .resolves(tags.map(tagFixture.toGitTag).join('\n'))
 
-      const detailedTags = await gitClient.detailTags({ filter: /tag/, count: 10 }, detailedTagsDependencies)
+      const detailedTags = await gitClient.detailTags({ filter: /tag/ }, detailedTagsDependencies)
 
       expect(detailedTags).to.deep.equal(tagsToReturn.map(tagFixture.convertDates))
     })
@@ -205,7 +205,7 @@ describe('gitClient', function () {
     it('detail tags sortby authorname and getting fields authorname', async function () {
       const { remote } = this
       this.git.raw = mock('git for-each-ref tags')
-        .withExactArgs(['for-each-ref', '--sort=-authorname', '--format="%(refname)#%(authorname)"', '--count=20', 'refs/tags'])
+        .withExactArgs(['for-each-ref', '--sort=-authorname', '--format="%(refname)#%(authorname)"', '--count=100', 'refs/tags'])
         .resolves('tag#firstAuthor')
 
       const detailedTags = await gitClient.detailTags({

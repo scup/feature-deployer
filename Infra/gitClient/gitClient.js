@@ -11,8 +11,7 @@ const dependencies = {
   gitPromisified,
   path,
   addCommandOnLog: noop,
-  isProduction: process.env.NODE_ENV !== 'test',
-  randomSeparator: String.fromCharCode(0x2550 + Math.random() * 48)
+  isProduction: process.env.NODE_ENV !== 'test'
 }
 
 const executeGitCommandForEnvironment = {
@@ -102,13 +101,13 @@ const gitClientApi = {
     return gitClient.applyGitCommand(['branch', '-D', branch], { dontFail: true }, injection)
   },
 
-  async detailTags ({ filter, count, sortField = DEFAULT_TAG_SORT, fields = DEFAULT_TAG_FIELDS }, injection) {
+  async detailTags ({ filter, sortField = DEFAULT_TAG_SORT, fields = DEFAULT_TAG_FIELDS }, injection) {
     const { randomSeparator } = Object.assign({}, dependencies, injection)
     const formatFields = [REF_NAME].concat(fields)
 
     const format = formatFields.map(toGitField).join(randomSeparator)
 
-    const tags = await gitClient.applyGitCommand(['for-each-ref', `--sort=-${sortField}`, `--format="${format}"`, `--count=${count}` ,'refs/tags'], {}, injection)
+    const tags = await gitClient.applyGitCommand(['for-each-ref', `--sort=-${sortField}`, `--format="${format}"`, `--count=100` ,'refs/tags'], {}, injection)
 
     return `${tags}`.split('\n').reduce(toGitTagObject, { fields: formatFields, randomSeparator, filter, tags: [] }).tags
   },

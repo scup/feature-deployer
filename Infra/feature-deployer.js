@@ -50,7 +50,7 @@ featureDeployerCommander
   .action(clearTestCommand)
 
 featureDeployerCommander
-  .command('list-releases <environment> [count]')
+  .command('list-releases <environment>')
   .alias('lr')
   .description(listReleasesCommandData.deployDescription)
   .action(listReleasesCommand)
@@ -82,6 +82,7 @@ featureDeployerCommander.addCommandOnLog = function addCommandOnLog (command) {
   commands.push(command)
 }
 featureDeployerCommander.now = new Date()
+featureDeployerCommander.randomSeparator = String.fromCharCode(0x2550 + Math.random() * 48)
 featureDeployerCommander.currentProjectPath = path.basename(currentProjectPath)
 
 async function featureDeployer (consoleArguments) {
