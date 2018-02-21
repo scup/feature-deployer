@@ -3,11 +3,16 @@ const path = require('path')
 
 const environment = require('../configuration/environment')
 
+const DEFAULT_TAG_SORT = 'taggerdate'
+const REF_NAME = 'refname'
+const DEFAULT_TAG_FIELDS = [{ name: 'authordate', type: Date }, 'authorname', 'authoremail']
+
 const dependencies = {
   gitPromisified,
   path,
   addCommandOnLog: noop,
-  isProduction: process.env.NODE_ENV !== 'test'
+  isProduction: process.env.NODE_ENV !== 'test',
+  randomSeparator: String.fromCharCode(0x2550 + Math.random() * 48)
 }
 
 const executeGitCommandForEnvironment = {
@@ -26,7 +31,8 @@ const gitClient = {
     addCommandOnLog(`git ${gitParameters.join(' ')}`)
 
     try {
-      await gitClient.executeGitCommand(gitParameters)
+      const result = await gitClient.executeGitCommand(gitParameters)
+      return result
     } catch (error) {
       if (!dontFail) {
         return Promise.reject(error)
@@ -96,6 +102,17 @@ const gitClientApi = {
     return gitClient.applyGitCommand(['branch', '-D', branch], { dontFail: true }, injection)
   },
 
+  async detailTags ({ filter, count, sortField = DEFAULT_TAG_SORT, fields = DEFAULT_TAG_FIELDS }, injection) {
+    const { randomSeparator } = Object.assign({}, dependencies, injection)
+    const formatFields = [REF_NAME].concat(fields)
+
+    const format = formatFields.map(toGitField).join(randomSeparator)
+
+    const tags = await gitClient.applyGitCommand(['for-each-ref', `--sort=-${sortField}`, `--format="${format}"`, `--count=${count}` ,'refs/tags'], {}, injection)
+
+    return `${tags}`.split('\n').reduce(toGitTagObject, { fields: formatFields, randomSeparator, filter, tags: [] }).tags
+  },
+
   async listTags ({ preffix }, injection) {
     const { isProduction, addCommandOnLog } = Object.assign({}, dependencies, injection)
 
@@ -122,6 +139,31 @@ function filterByPreffix (tag) {
 
 function executeGitCommand (parameters) {
   return gitClient.git.raw(parameters)
+}
+
+function toGitField(field) {
+  return `%(${field.type ? field.name : field})`
+}
+
+function toGitTagObject({ fields, randomSeparator, filter, tags }, gitTagString) {
+  const values = gitTagString.split(randomSeparator)
+  const tag = fields.reduce(buildObjectAttributes, { object: {}, values }).object
+
+  if (!filter.test(tag.refname)) return { fields, randomSeparator, filter, tags }
+  return { fields, randomSeparator, filter, tags: tags.concat(tag) }
+}
+
+function buildObjectAttributes({ object, values }, key, index) {
+  const attributeKey = !key.type ? key : key.name
+  const attributeValue = !key.type ? values[index] : new (key.type)(values[index])
+  const cleanedAttributeValue = attributeKey === REF_NAME ? attributeValue.replace(/^refs\/tags\//, '') : attributeValue
+
+  return {
+    values,
+    object: Object.assign({}, object, {
+      [attributeKey]: cleanedAttributeValue
+    })
+  }
 }
 
 function noop () {}

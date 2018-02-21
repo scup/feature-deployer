@@ -2,6 +2,7 @@ describe('gitClient', function () {
   const { lorem } = require('faker')
   const { expect } = require('chai')
   const { mock, assert } = require('sinon')
+  const tagFixture = require('./tag.fixture')
   const gitClient = require('./gitClient')
 
   context('workingon a git in a directory', function () {
@@ -157,6 +158,67 @@ describe('gitClient', function () {
       })
       const tagsFiltered = await gitClient.listTags({ preffix: 'preffixed_empty_' }, { isProduction: true })
       expect(tagsFiltered).to.equal(null)
+    })
+
+    const DEFAULT_DETAILED_TAG_COMMAND = [
+      'for-each-ref',
+      '--sort=-taggerdate',
+      '--format="%(refname)#%(authordate)#%(authorname)#%(authoremail)"',
+      '--count=10',
+      'refs/tags'
+    ]
+    const detailedTagsDependencies = { randomSeparator: '#' }
+
+    it('detail tags', async function () {
+      const tags = tagFixture.buildList(2)
+      const { remote } = this
+      this.git.raw = mock('git for-each-ref tags')
+        .withExactArgs(DEFAULT_DETAILED_TAG_COMMAND)
+        .resolves(tags.map(tagFixture.toGitTag).join('\n'))
+
+      const detailedTags = await gitClient.detailTags({ filter: /./, count: 10 }, detailedTagsDependencies)
+
+      expect(detailedTags).to.deep.equal(tags.map(tagFixture.convertDates))
+    })
+
+    it('filter detailed tags', async function () {
+      const tags = tagFixture.buildList(3, )
+      tags[0].tagname = 'tag-included'
+      tags[1].tagname = 'not-included'
+      tags[2].tagname = 'other-tag-included'
+      tags[0].refname = 'refs/tags/tag-included'
+      tags[1].refname = 'refs/tags/not-included'
+      tags[2].refname = 'refs/tags/other-tag-included'
+
+      const tagsToReturn = [tags[0], tags[2]]
+
+      const { remote } = this
+      this.git.raw = mock('git for-each-ref tags')
+        .withExactArgs(DEFAULT_DETAILED_TAG_COMMAND)
+        .resolves(tags.map(tagFixture.toGitTag).join('\n'))
+
+      const detailedTags = await gitClient.detailTags({ filter: /tag/, count: 10 }, detailedTagsDependencies)
+
+      expect(detailedTags).to.deep.equal(tagsToReturn.map(tagFixture.convertDates))
+    })
+
+    it('detail tags sortby authorname and getting fields authorname', async function () {
+      const { remote } = this
+      this.git.raw = mock('git for-each-ref tags')
+        .withExactArgs(['for-each-ref', '--sort=-authorname', '--format="%(refname)#%(authorname)"', '--count=20', 'refs/tags'])
+        .resolves('tag#firstAuthor')
+
+      const detailedTags = await gitClient.detailTags({
+        filter: /./,
+        count: 20,
+        sortField: 'authorname',
+        fields: ['authorname']
+      }, detailedTagsDependencies)
+
+      expect(detailedTags).to.deep.equal([{
+        refname: 'tag',
+        authorname: 'firstAuthor'
+      }])
     })
   })
 })

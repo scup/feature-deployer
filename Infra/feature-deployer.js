@@ -14,6 +14,9 @@ const testCommandData = require('./commands/test/package.json')
 const clearTestCommand = require('./commands/clearTest')
 const clearTestCommandData = require('./commands/clearTest/package.json')
 
+const listReleasesCommand = require('./commands/listReleases')
+const listReleasesCommandData = require('./commands/listReleases/package.json')
+
 const packageData = require('../package.json')
 
 const featureDeployerCommander = require('commander')
@@ -45,6 +48,12 @@ featureDeployerCommander
   .alias('ct')
   .description(clearTestCommandData.deployDescription)
   .action(clearTestCommand)
+
+featureDeployerCommander
+  .command('list-releases <environment> [count]')
+  .alias('lr')
+  .description(listReleasesCommandData.deployDescription)
+  .action(listReleasesCommand)
 
 const fixedDeployEnvironments = {
   rc: {
