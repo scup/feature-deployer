@@ -8,11 +8,11 @@ const factory = new Factory()
   .attr('authoremail', () => `<${internet.email().toLowerCase()}>`)
   .attr('tagname', () => `${lorem.word()}`)
 
-factory.toGitTag = function toGitTag(object) {
+factory.toGitTag = function toGitTag (object) {
   return Object.values(object).slice(1).join('#')
 }
 
-factory.convertDates = function convertDates(object) {
+factory.convertDates = function convertDates (object) {
   return {
     authordate: new Date(object.authordate),
     refname: object.tagname,

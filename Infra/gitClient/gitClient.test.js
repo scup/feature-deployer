@@ -171,7 +171,6 @@ describe('gitClient', function () {
 
     it('detail tags', async function () {
       const tags = tagFixture.buildList(2)
-      const { remote } = this
       this.git.raw = mock('git for-each-ref tags')
         .withExactArgs(DEFAULT_DETAILED_TAG_COMMAND)
         .resolves(tags.map(tagFixture.toGitTag).join('\n'))
@@ -182,7 +181,7 @@ describe('gitClient', function () {
     })
 
     it('filter detailed tags', async function () {
-      const tags = tagFixture.buildList(3, )
+      const tags = tagFixture.buildList(3)
       tags[0].tagname = 'tag-included'
       tags[1].tagname = 'not-included'
       tags[2].tagname = 'other-tag-included'
@@ -192,7 +191,6 @@ describe('gitClient', function () {
 
       const tagsToReturn = [tags[0], tags[2]]
 
-      const { remote } = this
       this.git.raw = mock('git for-each-ref tags')
         .withExactArgs(DEFAULT_DETAILED_TAG_COMMAND)
         .resolves(tags.map(tagFixture.toGitTag).join('\n'))
@@ -203,7 +201,6 @@ describe('gitClient', function () {
     })
 
     it('detail tags sortby authorname and getting fields authorname', async function () {
-      const { remote } = this
       this.git.raw = mock('git for-each-ref tags')
         .withExactArgs(['for-each-ref', '--sort=-authorname', '--format=%(refname)#%(authorname)', '--count=100', 'refs/tags'])
         .resolves('tag#firstAuthor')

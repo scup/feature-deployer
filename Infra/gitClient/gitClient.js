@@ -107,7 +107,7 @@ const gitClientApi = {
 
     const format = formatFields.map(toGitField).join(randomSeparator)
 
-    const tags = await gitClient.applyGitCommand(['for-each-ref', `--sort=-${sortField}`, `--format=${format}`, `--count=100` ,'refs/tags'], {}, injection)
+    const tags = await gitClient.applyGitCommand(['for-each-ref', `--sort=-${sortField}`, `--format=${format}`, `--count=100`, 'refs/tags'], {}, injection)
 
     return `${tags}`.split('\n').reduce(toGitTagObject, { fields: formatFields, randomSeparator, filter, tags: [] }).tags
   },
@@ -140,11 +140,11 @@ function executeGitCommand (parameters) {
   return gitClient.git.raw(parameters)
 }
 
-function toGitField(field) {
+function toGitField (field) {
   return `%(${field.type ? field.name : field})`
 }
 
-function toGitTagObject({ fields, randomSeparator, filter, tags }, gitTagString) {
+function toGitTagObject ({ fields, randomSeparator, filter, tags }, gitTagString) {
   const values = gitTagString.split(randomSeparator)
   const tag = fields.reduce(buildObjectAttributes, { object: {}, values }).object
 
@@ -152,9 +152,10 @@ function toGitTagObject({ fields, randomSeparator, filter, tags }, gitTagString)
   return { fields, randomSeparator, filter, tags: tags.concat(tag) }
 }
 
-function buildObjectAttributes({ object, values }, key, index) {
+function buildObjectAttributes ({ object, values }, key, index) {
+  const Type = key.type
   const attributeKey = !key.type ? key : key.name
-  const attributeValue = !key.type ? values[index] : new (key.type)(values[index])
+  const attributeValue = !key.type ? values[index] : new Type(values[index])
   const cleanedAttributeValue = attributeKey === REF_NAME ? attributeValue.replace(/^refs\/tags\//, '') : attributeValue
 
   return {
