@@ -1,0 +1,6 @@
+{
+  "name": "Deploy Command",
+  "description": "Generates a tag from master code, and publish it",
+  "private": true,
+  "main": "./deploy.command.js"
+}

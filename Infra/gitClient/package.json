@@ -1,0 +1,6 @@
+{
+  "name": "Git client",
+  "description": "Wraps a git calls",
+  "private": true,
+  "main": "./gitClient.js"
+}

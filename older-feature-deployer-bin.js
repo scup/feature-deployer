@@ -15,7 +15,7 @@ commander
   .option('-r, --repprove-feature', 'Repprove feature')
   .parse(process.argv)
 
-const deployFeature = require('./commands/deploy-feature')
+const deployFeature = require('./Infra/commands/deploy-feature')
 
 const [feature, maxBranches] = commander.args
 

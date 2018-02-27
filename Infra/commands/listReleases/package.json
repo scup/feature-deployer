@@ -1,0 +1,6 @@
+{
+  "name": "ListReleases Command",
+  "description": "List releases on environment",
+  "private": true,
+  "main": "./listReleases.command.js"
+}

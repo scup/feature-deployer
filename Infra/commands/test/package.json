@@ -1,0 +1,6 @@
+{
+  "name": "Test Command",
+  "description": "Generates a tag from master code + a branch code, and uploads to server",
+  "private": true,
+  "main": "./test.command.js"
+}
