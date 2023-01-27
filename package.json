@@ -26,7 +26,7 @@
   "dependencies": {
     "chalk": "^2.3.0",
     "commander": "^2.13.0",
-    "simple-git": "^1.89.0",
+    "simple-git": "^3.16.0",
     "winston": "^3.0.0-rc1"
   },
   "devDependencies": {
